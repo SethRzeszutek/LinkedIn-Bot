@@ -25,6 +25,7 @@ You will need to install the [webdriver](https://sites.google.com/a/chromium.org
 ## Configuration
 Before you run the bot, edit the configuration portion of the script. This will include your account login information (email, password, etc.) and other logical values to make the bot more of your own. It's that simple!
 ```python
+#You can delete the import statements and the email and password variables, I did not want to push my passwords
 CONFIGURED_EMAIL = '' #-email
 CONFIGURED_PASSWORD = '' #-password
 
