@@ -24,32 +24,33 @@ You will need to install the [webdriver](https://sites.google.com/a/chromium.org
 
 ## Configuration
 Before you run the bot, edit the configuration portion of the script. This will include your account login information (email, password, etc.) and other logical values to make the bot more of your own. It's that simple!
+```python
+CONFIGURED_EMAIL = '' #-email
+CONFIGURED_PASSWORD = '' #-password
 
-`CONFIGURED_EMAIL = ''`
-`CONFIGURED_PASSWORD = ''`
+#For lists, you can enter partial words to search more broadly.
+#For example, you can add 'Software' and titles like 'Software Developer' and 'Software Engineer' should work.
 
-For lists, you can enter partial words to search more broadly.
-For example, you can add 'Software' and titles like 'Software Developer' and 'Software Engineer' should work.
+VIEW_SPECIFIC_USERS = False #- Filter by a connection's title/job
+SPECIFIC_USERS_TO_VIEW = ['CEO', 'CTO', 'HR'] #- Titles/Jobs to filter by
 
-`VIEW_SPECIFIC_USERS = False` - Filter by a connection's title/job
-`SPECIFIC_USERS_TO_VIEW = ['CEO', 'CTO', 'HR']` - Titles/Jobs to filter by
+DELIMIT_BY_LOCATION = False #- Filter by a connection's location
+LOCATIONS = ['Ohio','Cleveland','Akron'] #- Locations
 
-`DELIMIT_BY_LOCATION = False` - Filter by a connection's location
-`LOCATIONS = ['Ohio','Cleveland','Akron']` - Locations
+NUM_LAZY_LOAD_ON_MY_NETWORK_PAGE = 10 #- How often it scrolls down the page, raise this number if you have view specific user on.
 
-`NUM_LAZY_LOAD_ON_MY_NETWORK_PAGE = 10` - How often it scrolls down the page, raise this number if you have view specific user on.
+CONNECT_WITH_USERS = False #- Automatically connect with users (LinkedIn's limit is 15,000)
 
-`CONNECT_WITH_USERS = False` - Automatically connect with users (LinkedIn's limit is 15,000)
+LIMIT_CONNECTION = False #- Limit connections to a specific number
+CONNECTION_LIMIT = 5 #- Max connection amount
+RANDOMIZE_CONNECTING_WITH_USERS = False #- Randomize connecting
+JOBS_TO_CONNECT_WITH = ['Developer', 'HR']` #- Jobs to connect with
 
-`LIMIT_CONNECTION = False` - Limit connections to a specific number
-`CONNECTION_LIMIT = 5` - Max connection amount
-`RANDOMIZE_CONNECTING_WITH_USERS = False` - Randomize connecting
-`JOBS_TO_CONNECT_WITH = ['Developer', 'HR']` - Jobs to connect with
+ENDORSE_CONNECTIONS = False #- (UNTESTED) I personally don't reccomend doing this, I will get it working and test it. However, it weakens any signifigance the whole endorsement section has if you are not personally vouching for a person's skills
+RANDOMIZE_ENDORSING_CONNECTIONS = False #- Randomize endorsments
 
-`ENDORSE_CONNECTIONS = False` - (UNTESTED) I personally don't reccomend doing this, I will get it working and test it. However, it weakens any signifigance the whole endorsement section has if you are not personally vouching for a person's skills
-`RANDOMIZE_ENDORSING_CONNECTIONS = False` - Randomize endorsments
-
-`VERBOSE = False` - Extra printout's of what the bot is doing
+VERBOSE = False #- Extra printout's of what the bot is doing
+```
 
 
 ## Run
