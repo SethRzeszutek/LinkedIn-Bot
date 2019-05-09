@@ -2,9 +2,6 @@
 Increase your likelihood to grow your connections and potentially get interview opportunities on LinkedIn by increasing visibility of your profile by viewing others profiles.
 ## About
 When you view user's profile in LinkedIn they get notified that you have looked at their profile. This bot will allow you to view user's profiles thus increasing your visibility in your suggested LinkedIn network.
-<p align="center">
-  <img src="https://preview.ibb.co/mMDuAk/linked_In_Bot_Profile_View_Results.png" alt="LinkedInBot Result" width="325" height="200">
-</p>
 
 ## Note
 
@@ -14,7 +11,7 @@ Updated and improved based on the sweet projects [Matt Flood](https://github.com
 **Important:** make sure that you have your [Profile Viewing Setting](https://www.linkedin.com/settings/?trk=nav_account_sub_nav_settings) changed from 'Anonymous' to  'Public' so LinkedIn members can see that you have visited them and can visit your profile in return.
 You also must change your language setting to **English**.
 
-LinkedIn-Bot was updated to [Pyhton 3+](https://www.python.org/downloads).
+LinkedIn-Bot was updated to [Python 3+](https://www.python.org/downloads).
 
 Before you can run the bot, you will need to install a few Python dependencies.
 You can install the three below by doing: `pip install -r requirements.txt`
