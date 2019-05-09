@@ -16,3 +16,4 @@ ENV/
 
 # visited users log
 visitedUsers.txt
+configure.py
