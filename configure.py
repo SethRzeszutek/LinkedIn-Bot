@@ -1,6 +1,10 @@
 # Configurable Constants
-CONFIGURED_EMAIL = ''
-CONFIGURED_PASSWORD = ''
+from credentials import * 
+
+CONFIGURED_EMAIL = email
+CONFIGURED_PASSWORD = password
+
+#For lists, you can enter partial words to search more broadly. 
 
 #For lists, you can enter partial words to search more broadly. 
 #For example, you can add 'Software' and titles like 'Software Developer' and 'Software Engineer' should work.
