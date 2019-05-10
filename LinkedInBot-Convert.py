@@ -81,7 +81,9 @@ def LinkedInBot(browser):
 	error403Count = 0
 	timer = time.time()
 
-	SESSION_CONNECTION_COUNT = 0
+	global TEMP_NAME
+	global TEMP_JOB
+	global TEMP_LOCATION
 
 	if ENDORSE_CONNECTIONS:
 		EndorseConnections(browser)
@@ -109,7 +111,10 @@ def LinkedInBot(browser):
 		print(browser.title.replace(' | LinkedIn', ''), ' visited. T:', T, '| V:', V, '| Q:', len(profilesQueued))
 
 		while profilesQueued:
-
+			print(str(SESSION_CONNECTION_COUNT)+":"+str(CONNECTION_LIMIT))
+			if (SESSION_CONNECTION_COUNT>=CONNECTION_LIMIT):
+				print("---Max connections reached stopping program---")
+				exit()
 			shuffle(profilesQueued)
 			profileID = profilesQueued.pop()
 			browser.get('https://www.linkedin.com'+profileID)
@@ -125,8 +130,6 @@ def LinkedInBot(browser):
 							ConnectWithUser(browser)
 						elif random.choice([True, False]):
 							ConnectWithUser(browser)
-					elif (SESSION_CONNECTION_COUNT>CONNECTION_LIMIT):
-						break
 				elif not LIMIT_CONNECTION:
 					if not RANDOMIZE_CONNECTING_WITH_USERS:
 						ConnectWithUser(browser)
@@ -218,15 +221,15 @@ def ConnectWithUser(browser):
 				break
 
 	if jobTitleMatches and LocationCheck(browser):
+		global SESSION_CONNECTION_COUNT
 		try:
 			if VERBOSE:
 				print('Sending the user an invitation to connect.')
-			#browser.find_element_by_xpath('//button[@class="connect primary top-card-action ember-view"]').click()
+				SESSION_CONNECTION_COUNT += 1
+				print("--> Session Connection Count: "+ str(SESSION_CONNECTION_COUNT))
 			browser.find_element_by_xpath('//button[@class="pv-s-profile-actions pv-s-profile-actions--connect artdeco-button artdeco-button--3 mr2 mt2"]').click()
 			time.sleep(3)
 			browser.find_element_by_xpath('//button[@class="artdeco-button artdeco-button--3 ml1"]').click()
-			SESSION_CONNECTION_COUNT+=1
-			print("--> Session Connection Count: "+ str(SESSION_CONNECTION_COUNT))
 		except:
 			pass
 

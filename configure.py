@@ -28,7 +28,7 @@ NUM_LAZY_LOAD_ON_MY_NETWORK_PAGE = 10
 CONNECT_WITH_USERS = True
 #Limit the amount of people per session you will connect with
 LIMIT_CONNECTION = True
-CONNECTION_LIMIT = 5
+CONNECTION_LIMIT = 2
 #Don't connect with every single user
 RANDOMIZE_CONNECTING_WITH_USERS = False
 #List of Job titles to connect with
