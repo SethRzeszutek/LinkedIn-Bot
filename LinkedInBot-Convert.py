@@ -50,7 +50,7 @@ def StartBrowser():
 	browser.get('https://linkedin.com/uas/login')
 	emailElement = browser.find_element_by_id('username')
 	emailElement.send_keys(EMAIL)
-	passElement = browser.find_element_by_id('seth5626')
+	passElement = browser.find_element_by_id('password')
 	passElement.send_keys(PASSWORD)
 	passElement.submit()
 
@@ -59,7 +59,7 @@ def StartBrowser():
 
 	soup = BeautifulSoup(browser.page_source, "lxml")
 	if soup.find('div', {'class':'alert error'}):
-		print('Error! Please verify your username and seth5626.')
+		print('Error! Please verify your username and password.')
 		browser.quit()
 	elif browser.title == '403: Forbidden':
 		print('LinkedIn is momentarily unavailable. Please wait a moment, then try again.')
