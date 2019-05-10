@@ -18,7 +18,7 @@ You can install the three below by doing: `pip install -r requirements.txt`
 
 - [BeautifulSoup4](https://pypi.python.org/pypi/beautifulsoup4), for parsing html: `pip install BeautifulSoup4`
 - [Selenium](http://www.seleniumhq.org/), for browser automation: `pip install Selenium`
-- xlmx for quicker HTML parsing: `pip install xmlx`
+- lxml for quicker HTML parsing: `pip install lxml`
 
 You will need to install the [webdriver](https://sites.google.com/a/chromium.org/chromedriver/downloads) for Google Chrome then put it in the same folder than the bot if you are on Windows, or in the `/usr/bin` folder if you are on OS X.
 

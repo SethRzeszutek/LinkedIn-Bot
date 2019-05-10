@@ -111,7 +111,6 @@ def LinkedInBot(browser):
 		print(browser.title.replace(' | LinkedIn', ''), ' visited. T:', T, '| V:', V, '| Q:', len(profilesQueued))
 
 		while profilesQueued:
-			print(str(SESSION_CONNECTION_COUNT)+":"+str(CONNECTION_LIMIT))
 			if (SESSION_CONNECTION_COUNT>=CONNECTION_LIMIT):
 				print("---Max connections reached stopping program---")
 				exit()
@@ -445,22 +444,28 @@ def LocationCheck(browser):
 
 def ReturnLocationMatch(browser):
 	soup = BeautifulSoup(browser.page_source, "lxml")
+	rtn = ""
 	locations = soup.findAll("h3", {"class": "pv-top-card-section__location"})
 	for p in locations:
 		for l in LOCATIONS:
 			if l.lower() in p.text.lower():
-				return l
-			else:
-				return "X"
+				rtn = l
+	if rtn != "":
+		return rtn
+	else:
+		return("X")
 
 def ReturnJobMatch(browser):
 	soup = BeautifulSoup(browser.page_source, "lxml")
+	rtn = ""
 	for selection in soup.findAll("h2", {"class": "pv-top-card-section__headline"}):
 		for job in JOBS_TO_CONNECT_WITH:
-			if job in selection.getText():
-				return job
-			else:
-				return "X"
+			if job.lower() in selection.text.lower():
+				rtn = job
+	if rtn != "":
+		return rtn
+	else:
+		return("X")
 
 
 if __name__ == '__main__':
