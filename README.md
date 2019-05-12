@@ -8,6 +8,7 @@ When you view user's profile in LinkedIn they get notified that you have looked 
 Updated and improved based on the sweet projects [Matt Flood](https://github.com/MattFlood7/LinkedInBot) and [LInBot](https://github.com/helloitsim/LInBot).
 
 ## Requirements
+
 **Important:** make sure that you have your [Profile Viewing Setting](https://www.linkedin.com/settings/?trk=nav_account_sub_nav_settings) changed from 'Anonymous' to  'Public' so LinkedIn members can see that you have visited them and can visit your profile in return.
 You also must change your language setting to **English**.
 
@@ -27,9 +28,9 @@ Failure to observe this step will give you an error selenium.common.exceptions.W
 
 Other supported browsers will have their own drivers available. Links to some of the more popular browser drivers follow."
 * Chrome:	https://sites.google.com/a/chromium.org/chromedriver/downloads
-* Edge:	https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/
+	* On MacOS if you have [HomeBrew](https://brew.sh) installed you can use 'brew install chromedriver'
 * Firefox:	https://github.com/mozilla/geckodriver/releases
-* Safari:	https://webkit.org/blog/6900/webdriver-support-in-safari-10/
+	* On MacOS if you have [HomeBrew](https://brew.sh) installed you can use 'brew install geckodriver'
 
 NOTE: Currently only Chrome is supported.
 
@@ -42,6 +43,11 @@ Before you run the bot, edit the configuration portion of the script. This will 
 #You can delete the import statements and the email and password variables, I did not want to push my passwords
 CONFIGURED_EMAIL = '' #-email
 CONFIGURED_PASSWORD = '' #-password
+
+BROWSER = "CHROME" #Options are CHROME or FIREFOX
+HEADLESS = True #-Run your script without any need for opening the browser! Only works for Firefox...
+
+PARSER = "lxml" #-Parser for BeautifulSoup to use
 
 #For lists, you can enter partial words to search more broadly.
 #For example, you can add 'Software' and titles like 'Software Developer' and 'Software Engineer' should work.

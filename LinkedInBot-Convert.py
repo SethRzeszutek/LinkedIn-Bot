@@ -6,19 +6,23 @@
 import os, random, sys, time
 from configure import *
 from selenium import webdriver
+if BROWSER.upper() == "CHROME":
+	from selenium.webdriver.chrome.options import Options
+if BROWSER.upper() == "FIREFOX":
+	from selenium.webdriver.firefox.options import Options
 from bs4 import BeautifulSoup
 from random import shuffle
 import urllib.parse as urlparse
 from os.path import join, dirname
-from dotenv import load_dotenv
+#from dotenv import load_dotenv
 
 SESSION_CONNECTION_COUNT = 0
 TEMP_NAME=""
 TEMP_JOB=""
 TEMP_LOCATION=""
 
-dotenv_path = join(dirname(__file__), '.env')
-load_dotenv(dotenv_path)
+#dotenv_path = join(dirname(__file__), '.env')
+#load_dotenv(dotenv_path)
 
 
 ###CONFIGURE ALL SETTINGS IN configure.py###
@@ -41,11 +45,22 @@ def Launch():
 def StartBrowser():
 	"""
 	Launch browser based on the user's selected choice.
-	browserChoice: the browser selected by the user.
 	"""
-	print('\n-> Launching Chrome')
-	#browser = webdriver.Chrome()
-	browser = webdriver.Firefox()
+	if BROWSER.upper() == "CHROME":
+		print('\n-> Launching Chrome')
+		options = Options()
+		#if HEADLESS:
+		#	options.headless = True
+		
+		browser = webdriver.Chrome(options=options)
+	elif BROWSER.upper() == "FIREFOX":
+		print('\n-> Launching Firefox')
+		options = Options()
+		if HEADLESS:
+			options.headless = True
+		browser = webdriver.Firefox(options=options)
+	else:
+		print("Broswer type not recognized, please check your configure.py - BROWSER="+BROWSER)
 
 	# Sign in
 	browser.get('https://linkedin.com/uas/login')
@@ -58,7 +73,7 @@ def StartBrowser():
 	print('-> Signing in...')
 	time.sleep(3)
 
-	soup = BeautifulSoup(browser.page_source, "lxml")
+	soup = BeautifulSoup(browser.page_source, PARSER)
 	if soup.find('div', {'class':'alert error'}):
 		print('Error! Please verify your username and password.')
 		browser.quit()
@@ -99,12 +114,12 @@ def LinkedInBot(browser):
 
 			NavigateToMyNetworkPage(browser)
 			T += 1
-			if GetNewProfileURLS(BeautifulSoup(browser.page_source, "lxml"), profilesQueued):
+			if GetNewProfileURLS(BeautifulSoup(browser.page_source, PARSER), profilesQueued):
 				break
 			else:
 				print('|',
 				time.sleep(random.uniform(5, 7)))
-		soup = BeautifulSoup(browser.page_source, "lxml")
+		soup = BeautifulSoup(browser.page_source, PARSER)
 		profilesQueued = list(set(GetNewProfileURLS(soup, profilesQueued)))
 
 		V += 1
@@ -143,7 +158,7 @@ def LinkedInBot(browser):
 
 			# Get new profiles ID
 			time.sleep(10)
-			soup = BeautifulSoup(browser.page_source, "lxml")
+			soup = BeautifulSoup(browser.page_source, PARSER)
 			profilesQueued.extend(GetNewProfileURLS(soup, profilesQueued))
 			profilesQueued = list(set(profilesQueued))
 
@@ -210,7 +225,7 @@ def ConnectWithUser(browser):
 	browse: the selenium browser used to interact with the page.
 	"""
 
-	soup = BeautifulSoup(browser.page_source, "lxml")
+	soup = BeautifulSoup(browser.page_source, PARSER)
 	jobTitleMatches = False
 	# I know not that efficient of a loop but BeautifulSoup and Selenium are
 	# giving me a hard time finding the specifc h2 element that contain's user's job title
@@ -271,7 +286,6 @@ def FindProfileURLsInNetworkPage(soup, profilesQueued, profileURLS, visitedUsers
 	try:
 		for a in soup.find_all('a', class_='discover-person-card__link'):
 			if ValidateURL(a['href'], profileURLS, profilesQueued, visitedUsers):
-
 				if VIEW_SPECIFIC_USERS:
 					for span in a.find_all('span', class_='discover-person-card__occupation'):
 						for occupation in SPECIFIC_USERS_TO_VIEW:
@@ -391,7 +405,7 @@ def EndorseConnections(browser):
 		for counter in range(1,NUM_LAZY_LOAD_ON_MY_NETWORK_PAGE):
 			ScrollToBottomAndWaitForLoad(browser)
 
-		soup = BeautifulSoup(browser.page_source, "lxml")
+		soup = BeautifulSoup(browser.page_source, PARSER)
 		for a in soup.find_all('a', class_='mn-person-info__picture'):
 			if VERBOSE:
 				print(a['href'])
@@ -431,7 +445,7 @@ def ScrollToBottomAndWaitForLoad(browser):
 	time.sleep(4)
 
 def LocationCheck(browser):
-	soup = BeautifulSoup(browser.page_source, "lxml")
+	soup = BeautifulSoup(browser.page_source, PARSER)
 	if(DELIMIT_BY_LOCATION):
 		locations = soup.findAll("h3", {"class": "pv-top-card-section__location"})
 		for p in locations:
@@ -444,7 +458,7 @@ def LocationCheck(browser):
 		return False
 
 def ReturnLocationMatch(browser):
-	soup = BeautifulSoup(browser.page_source, "lxml")
+	soup = BeautifulSoup(browser.page_source, PARSER)
 	rtn = ""
 	locations = soup.findAll("h3", {"class": "pv-top-card-section__location"})
 	for p in locations:
@@ -457,7 +471,7 @@ def ReturnLocationMatch(browser):
 		return("X")
 
 def ReturnJobMatch(browser):
-	soup = BeautifulSoup(browser.page_source, "lxml")
+	soup = BeautifulSoup(browser.page_source, PARSER)
 	rtn = ""
 	for selection in soup.findAll("h2", {"class": "pv-top-card-section__headline"}):
 		for job in JOBS_TO_CONNECT_WITH:

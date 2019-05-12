@@ -4,9 +4,20 @@ from credentials import *
 CONFIGURED_EMAIL = email
 CONFIGURED_PASSWORD = password
 
-#For lists, you can enter partial words to search more broadly. 
+###-------ENVIRONMENT SETTINGS---------###
+BROWSER = "CHROME" #Options are CHROME or FIREFOX
+HEADLESS = True #Headless doesnt seem to run correctly in Chrome, so that is an issue. It works correctly in Firefox though
 
-#For lists, you can enter partial words to search more broadly. 
+
+
+###-------BEAUTIFUL SOUP SETTINGS---------###
+#Type of Parser for BeautifulSoup, lxml is the fastest but there are few different options
+PARSER = "lxml"
+
+
+###-------BOT SEARCH SETTINGS---------###
+
+#For lists, you can enter partial words to search more broadly.
 #For example, you can add 'Software' and titles like 'Software Developer' and 'Software Engineer' should work.
 
 #Turn on Title Filter
@@ -38,5 +49,8 @@ JOBS_TO_CONNECT_WITH = ['Developer', 'HR', 'Recruiter','Software', 'Software Eng
 ENDORSE_CONNECTIONS = False
 RANDOMIZE_ENDORSING_CONNECTIONS = True
 
+
+
+###-------DEBUGGING---------###
 #See more information about what the bot is doing
 VERBOSE = True
