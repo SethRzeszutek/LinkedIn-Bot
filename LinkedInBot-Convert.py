@@ -40,11 +40,12 @@ def Launch():
 
 def StartBrowser():
 	"""
-	Launch broswer based on the user's selected choice.
+	Launch browser based on the user's selected choice.
 	browserChoice: the browser selected by the user.
 	"""
 	print('\n-> Launching Chrome')
-	browser = webdriver.Chrome()
+	#browser = webdriver.Chrome()
+	browser = webdriver.Firefox()
 
 	# Sign in
 	browser.get('https://linkedin.com/uas/login')
