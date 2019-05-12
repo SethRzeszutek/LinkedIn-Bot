@@ -32,7 +32,6 @@ Other supported browsers will have their own drivers available. Links to some of
 * Firefox:	https://github.com/mozilla/geckodriver/releases
 	* On MacOS if you have [HomeBrew](https://brew.sh) installed you can use 'brew install geckodriver'
 
-NOTE: Currently only Chrome is supported.
 
 
 You will need to install the [webdriver](https://sites.google.com/a/chromium.org/chromedriver/downloads) for Google Chrome then put it in the same folder than the bot if you are on Windows, or in the `/usr/bin` folder if you are on OS X.
