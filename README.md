@@ -44,7 +44,8 @@ Other supported browsers will have their own drivers available. Links to some of
 
 You will need to install the [webdriver](https://sites.google.com/a/chromium.org/chromedriver/downloads) for Google Chrome then put it in the same folder than the bot if you are on Windows, or in the `/usr/bin` folder if you are on OS X.
 
-## Configuration
+## Configuration and Running
+To run the bot go into the directory where the bot is stored and type `python LinkedIn-Convert.py`
 Before you run the bot, edit the configuration portion of the script. This will include your account login information (email, password, etc.) and other logical values to make the bot more of your own. It's that simple!
 ```python
 #You can delete the import statements and the email and password variables, I did not want to push my passwords
