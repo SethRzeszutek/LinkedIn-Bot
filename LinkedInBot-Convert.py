@@ -104,6 +104,18 @@ def LinkedInBot(browser):
 	if ENDORSE_CONNECTIONS:
 		EndorseConnections(browser)
 
+	if SCREENSHOTS:
+		if VERBOSE:
+			print("-> Creating Screenshot Folder")
+		try:
+			os.makedirs("Screenshots")
+			if VERBOSE:
+				print("Created Screenshot Folder")
+		except FileExistsError:
+			if VERBOSE:
+				print("Screenshot Folder already exists!")
+			pass
+
 	print('-> Scraping User URLs on Network tab.\n')
 
 	# Infinite loop
@@ -241,7 +253,12 @@ def ConnectWithUser(browser):
 			if VERBOSE:
 				print('Sending the user an invitation to connect.')
 				SESSION_CONNECTION_COUNT += 1
-				print("--> Session Connection Count: "+ str(SESSION_CONNECTION_COUNT))
+				print("-> Session Connection Count: "+ str(SESSION_CONNECTION_COUNT))
+			if SCREENSHOTS:
+				filename = TEMP_NAME+"-connected.png"
+				if VERBOSE:
+					print("-> Saved "+filename)
+				browser.save_screenshot(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'Screenshots', filename))
 			browser.find_element_by_xpath('//button[@class="pv-s-profile-actions pv-s-profile-actions--connect artdeco-button artdeco-button--3 mr2 mt2"]').click()
 			time.sleep(3)
 			browser.find_element_by_xpath('//button[@class="artdeco-button artdeco-button--3 ml1"]').click()

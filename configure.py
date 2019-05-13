@@ -5,7 +5,7 @@ CONFIGURED_EMAIL = email
 CONFIGURED_PASSWORD = password
 
 ###-------ENVIRONMENT SETTINGS---------###
-BROWSER = "CHROME" #Options are CHROME or FIREFOX
+BROWSER = "Chrome" #Options are CHROME or FIREFOX
 HEADLESS = True #Headless doesnt seem to run correctly in Chrome, so that is an issue. It works correctly in Firefox though
 
 
@@ -17,6 +17,8 @@ PARSER = "lxml"
 
 ###-------BOT SEARCH SETTINGS---------###
 
+
+SCREENSHOTS = True
 #For lists, you can enter partial words to search more broadly.
 #For example, you can add 'Software' and titles like 'Software Developer' and 'Software Engineer' should work.
 
@@ -39,7 +41,7 @@ NUM_LAZY_LOAD_ON_MY_NETWORK_PAGE = 10
 CONNECT_WITH_USERS = True
 #Limit the amount of people per session you will connect with
 LIMIT_CONNECTION = True
-CONNECTION_LIMIT = 2
+CONNECTION_LIMIT = 20
 #Don't connect with every single user
 RANDOMIZE_CONNECTING_WITH_USERS = False
 #List of Job titles to connect with
