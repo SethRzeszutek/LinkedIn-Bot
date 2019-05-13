@@ -1,12 +1,11 @@
-![LinkedIn-Bot](https://i.imgur.com/JGWfTdj.png)
-
+![LinkedIn-Bot](https://i.imgur.com/od6HpD8.png)
 # LinkedInBot
 
 Increase your likelihood to grow your connections and potentially get interview opportunities on LinkedIn by increasing visibility of your profile by viewing others profiles.
 
 ## About
 
-![Stats](https://i.imgur.com/XWlCCFa.png)
+![Stats](https://i.imgur.com/MVgProO.png)
 When you view user's profile in LinkedIn they get notified that you have looked at their profile. This bot will allow you to view user's profiles thus increasing your visibility in your suggested LinkedIn network.
 
 ## Note
