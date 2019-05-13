@@ -1,6 +1,6 @@
 # LinkedInBot
 
-![LinkedIn-Bot](https://i.imgur.com/Vy6sUDT.png)
+![LinkedIn-Bot](https://i.imgur.com/pj6SjKH.png)
 Increase your likelihood to grow your connections and potentially get interview opportunities on LinkedIn by increasing visibility of your profile by viewing others profiles.
 
 ## About
