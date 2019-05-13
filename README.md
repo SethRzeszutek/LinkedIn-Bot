@@ -33,9 +33,9 @@ Failure to observe this step will give you an error selenium.common.exceptions.W
 
 Other supported browsers will have their own drivers available. Links to some of the more popular browser drivers follow."
 * Chrome:	https://sites.google.com/a/chromium.org/chromedriver/downloads
-	* On MacOS if you have [HomeBrew](https://brew.sh) installed you can use 'brew install chromedriver'
+	* On MacOS if you have [HomeBrew](https://brew.sh) installed you can use `brew install chromedriver`
 * Firefox:	https://github.com/mozilla/geckodriver/releases
-	* On MacOS if you have [HomeBrew](https://brew.sh) installed you can use 'brew install geckodriver'
+	* On MacOS if you have [HomeBrew](https://brew.sh) installed you can use `brew install geckodriver`
 
 
 
