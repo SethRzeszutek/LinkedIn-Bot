@@ -17,3 +17,6 @@ ENV/
 # visited users log
 visitedUsers.txt
 credentials.py
+Screenshots/
+geckodriver
+geckodriver.log

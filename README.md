@@ -48,6 +48,7 @@ HEADLESS = True #-Run your script without any need for opening the browser! Only
 
 PARSER = "lxml" #-Parser for BeautifulSoup to use
 
+SCREENSHOT #-Screenshot each connection
 #For lists, you can enter partial words to search more broadly.
 #For example, you can add 'Software' and titles like 'Software Developer' and 'Software Engineer' should work.
 
