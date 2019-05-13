@@ -8,9 +8,12 @@ Increase your likelihood to grow your connections and potentially get interview 
 ![Stats](https://i.imgur.com/MVgProO.png)
 When you view user's profile in LinkedIn they get notified that you have looked at their profile. This bot will allow you to view user's profiles thus increasing your visibility in your suggested LinkedIn network.
 
-## Note
-
-Updated and improved based on the sweet projects [Matt Flood](https://github.com/MattFlood7/LinkedInBot) and [LInBot](https://github.com/helloitsim/LInBot).
+## Features
+* Automate viewing and connecting with users based on their job title and/or location!
+* Set a limit on how many connections you would like to connect with!
+* Watch the browser work away or try out Headless mode! (Currently only working in Firefox)
+* If connected store a screenshot of a users profile!
+* If you have any suggestions open an issue and I or a contributor will gladly do our best to implement it if it aligns with the goals of the project! 
 
 ## Requirements
 
@@ -92,5 +95,7 @@ V: Number of profiles the bot actually visited (profiles you can access: rank 3 
 
 Q: Number of profiles in queue.
 
-## Notes
+## Note
+
+Updated and improved based on the sweet projects [Matt Flood](https://github.com/MattFlood7/LinkedInBot) and [LInBot](https://github.com/helloitsim/LInBot).
 I would have made this a branch on Matt Flood's version, however I was tailoring it more specifically to my needs rather than making a setting out of everything. Just as he stood on helloitsim, I stand on the work that Matt Flood has done.
