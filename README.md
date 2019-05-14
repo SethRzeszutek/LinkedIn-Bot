@@ -56,6 +56,9 @@ CONFIGURED_PASSWORD = '' #-password
 BROWSER = "CHROME" #Options are CHROME or FIREFOX
 HEADLESS = True #-Run your script without any need for opening the browser! Only works for Firefox...
 
+PRINT_ACTIONS = True #-See every main step performed
+PRINT_SETTINGS = False #-See settings
+
 PARSER = "lxml" #-Parser for BeautifulSoup to use
 
 SCREENSHOT #-Screenshot each connection
