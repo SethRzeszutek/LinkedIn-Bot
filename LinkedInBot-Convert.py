@@ -26,8 +26,8 @@ TEMP_LOCATION=""
 
 
 ###CONFIGURE ALL SETTINGS IN configure.py###
-EMAIL = os.getenv("USERNAME",CONFIGURED_EMAIL)
-PASSWORD = os.getenv("PASSWORD",CONFIGURED_PASSWORD)
+EMAIL = CONFIGURED_EMAIL
+PASSWORD = CONFIGURED_PASSWORD
 
 
 def Launch():
@@ -128,14 +128,12 @@ def LinkedInBot(browser):
 
 	if SCREENSHOTS:
 		if PRINT_ACTIONS:
-			print("-> Creating Screenshot Folder")
+			print("-> Enabled Screenshots")
 		try:
 			os.makedirs("Screenshots")
 			if PRINT_ACTIONS:
 				print("\t* Created Screenshot Folder")
 		except FileExistsError:
-			if PRINT_ACTIONS:
-				print("\t* Screenshot Folder already exists!")
 			pass
 
 	if PRINT_ACTIONS:
