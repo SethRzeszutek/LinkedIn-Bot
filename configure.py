@@ -5,8 +5,10 @@ CONFIGURED_EMAIL = email
 CONFIGURED_PASSWORD = password
 
 ###-------ENVIRONMENT SETTINGS---------###
-BROWSER = "Chrome" #Options are CHROME or FIREFOX
+BROWSER = "Firefox" #Options are CHROME or FIREFOX
 HEADLESS = True #Headless doesnt seem to run correctly in Chrome, so that is an issue. It works correctly in Firefox though
+PRINT_ACTIONS = True
+PRINT_DETAIL = True
 
 
 
@@ -45,11 +47,8 @@ CONNECTION_LIMIT = 20
 #Don't connect with every single user
 RANDOMIZE_CONNECTING_WITH_USERS = False
 #List of Job titles to connect with
-JOBS_TO_CONNECT_WITH = ['Developer', 'HR', 'Recruiter','Software', 'Software Engineer', 'Python', 'Javascript', 'Node']
+JOBS_TO_CONNECT_WITH = ['Developer', 'HR','Software', 'Software Engineer', 'Python', 'Javascript', 'Node']
 
-#Endorse a connections skillset (I would not personally do this)
-ENDORSE_CONNECTIONS = False
-RANDOMIZE_ENDORSING_CONNECTIONS = True
 
 
 
