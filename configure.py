@@ -8,8 +8,7 @@ CONFIGURED_PASSWORD = password
 BROWSER = "Firefox" #Options are CHROME or FIREFOX
 HEADLESS = True #Headless doesnt seem to run correctly in Chrome, so that is an issue. It works correctly in Firefox though
 PRINT_ACTIONS = True
-PRINT_DETAIL = True
-
+PRINT_SETTINGS = False
 
 
 ###-------BEAUTIFUL SOUP SETTINGS---------###
@@ -54,4 +53,4 @@ JOBS_TO_CONNECT_WITH = ['Developer', 'HR','Software', 'Software Engineer', 'Pyth
 
 ###-------DEBUGGING---------###
 #See more information about what the bot is doing
-VERBOSE = True
+VERBOSE = False

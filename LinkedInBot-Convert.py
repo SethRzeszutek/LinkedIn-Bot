@@ -46,6 +46,28 @@ def StartBrowser():
 	"""
 	Launch browser based on the user's selected choice.
 	"""
+	if PRINT_SETTINGS:
+		print("\n\n------SETTINGS------")
+		print("BROWSER:"+BROWSER)
+		print("HEADLESS:"+str(HEADLESS))
+		print("PRINT_ACTIONS:"+str(PRINT_ACTIONS))
+		print("PRINT_SETTINGS:"+str(PRINT_SETTINGS))
+		print("PARSER:"+PARSER)
+		print("SCREEENSHOTS:"+str(SCREENSHOTS))
+		print("VIEW_SPECIFIC_USERS:"+str(VIEW_SPECIFIC_USERS))
+		print("SPECIFIC_USERS_TO_VIEW:"+', '.join(SPECIFIC_USERS_TO_VIEW))
+		print("DELIMIT_BY_LOCATION:"+str(DELIMIT_BY_LOCATION))
+		print("LOCATIONS:"+', '.join(LOCATIONS))
+		print("NUM_LAZY_LOAD_ON_MY_NETWORK_PAGE:"+str(NUM_LAZY_LOAD_ON_MY_NETWORK_PAGE))
+		print("CONNECT_WITH_USERS:"+str(CONNECT_WITH_USERS))
+		print("LIMIT_CONNECTION:"+str(LIMIT_CONNECTION))
+		print("CONNECTION_LIMIT:"+str(CONNECTION_LIMIT))
+		print("RANDOMIZE_CONNECTING_WITH_USERS:"+str(RANDOMIZE_CONNECTING_WITH_USERS))
+		print("JOBS_TO_CONNECT_WITH:"+', '.join(JOBS_TO_CONNECT_WITH))
+		print("VERBOSE:"+str(VERBOSE))
+		print("-----------------------------\n\n")
+
+
 	if BROWSER.upper() == "CHROME":
 		if PRINT_ACTIONS:
 			print('\n-> Launching Chrome')
@@ -59,8 +81,6 @@ def StartBrowser():
 			print('\n-> Launching Firefox')
 		options = Options()
 		if HEADLESS:
-			if PRINT_DETAIL:
-				print("* Headless Mode")
 			options.headless = True
 		browser = webdriver.Firefox(options=options)
 	else:
@@ -86,7 +106,7 @@ def StartBrowser():
 		print('!!! LinkedIn is momentarily unavailable. Please wait a moment, then try again.')
 		browser.quit()
 	else:
-		print('!!! Success!\n')
+		print('!!! Sign in success!\n')
 		LinkedInBot(browser)
 
 
@@ -112,10 +132,10 @@ def LinkedInBot(browser):
 		try:
 			os.makedirs("Screenshots")
 			if PRINT_ACTIONS:
-				print("* Created Screenshot Folder")
+				print("\t* Created Screenshot Folder")
 		except FileExistsError:
 			if PRINT_ACTIONS:
-				print("* Screenshot Folder already exists!")
+				print("\t* Screenshot Folder already exists!")
 			pass
 
 	if PRINT_ACTIONS:
@@ -139,10 +159,8 @@ def LinkedInBot(browser):
 
 		V += 1
 		if PRINT_ACTIONS:
-			print('\n\n* Finished gathering User URLs.\n')
-			print("--> Starting Process")
-
-		print(browser.title.replace(' | LinkedIn', ''), ' visited. T:', T, '| V:', V, '| Q:', len(profilesQueued))
+			print('\n\t* Finished gathering User URLs.\n')
+			print("--> Starting Process\n\n")
 
 		while profilesQueued:
 			if (SESSION_CONNECTION_COUNT>=CONNECTION_LIMIT):
@@ -156,6 +174,16 @@ def LinkedInBot(browser):
 			TEMP_NAME = re.sub(regex, '', browser.title.replace(' | LinkedIn', ''))
 			TEMP_JOB = ReturnJobMatch(browser)
 			TEMP_LOCATION = ReturnLocationMatch(browser)
+
+			if DELIMIT_BY_LOCATION and VIEW_SPECIFIC_USERS:
+				print("● Name: %-17s | T: %-2d | V: %-2d | Q: %-2d | Location: %-10s | Title: %-15s" %(TEMP_NAME, T, V, len(profilesQueued), TEMP_LOCATION, TEMP_JOB))
+			elif DELIMIT_BY_LOCATION:
+				print("● Name: %-17s | T: %-2d | V: %-2d | Q: %-2d | Location: %-10s" %(TEMP_NAME, T, V, len(profilesQueued), TEMP_LOCATION))
+			elif VIEW_SPECIFIC_USERS:
+				print("● Name: %-17s | T: %-2d | V: %-2d | Q: %-2d | Title: %-15s" %(TEMP_NAME, T, V, len(profilesQueued), TEMP_JOB))
+			else:
+				print("● Name: %-17s | T: %-2d | V: %-2d | Q: %-2d" %(TEMP_NAME, T, V, len(profilesQueued)))
+
 			# Connect with users if the flag is turned on and matches your criteria
 			if CONNECT_WITH_USERS and locationMatches:
 				if LIMIT_CONNECTION:
@@ -202,15 +230,6 @@ def LinkedInBot(browser):
 				T += 1
 				V += 1
 				error403Count = 0
-				if DELIMIT_BY_LOCATION and VIEW_SPECIFIC_USERS:
-					#print(browserTitle.replace(' | LinkedIn', ''), 'visited. T:', T, '| V:', V, '| Q:', len(profilesQueued), '| Location Match:', ReturnLocationMatch(browser), '| Job Match:', ReturnJobMatch(browser))
-					print(TEMP_NAME, 'visited. T:', T, '| V:', V, '| Q:', len(profilesQueued), '| Location Match:', TEMP_LOCATION, '| Job Match:', TEMP_JOB)
-				elif DELIMIT_BY_LOCATION:
-					print(TEMP_NAME, 'visited. T:', T, '| V:', V, '| Q:', len(profilesQueued), '| Location Match:', TEMP_LOCATION)
-				elif VIEW_SPECIFIC_USERS:
-					print(TEMP_NAME, 'visited. T:', T, '| V:', V, '| Q:', len(profilesQueued), '| Job Match:', TEMP_JOB)
-				else:
-					print(TEMP_NAME, 'visited. T:', T, '| V:', V, '| Q:', len(profilesQueued))
 
 			# Pause
 			if (T%1000==0) or time.time()-timer > 3600:
@@ -260,19 +279,18 @@ def ConnectWithUser(browser):
 			if SCREENSHOTS:
 				filename = TEMP_NAME+"-connected.png"
 				if PRINT_ACTIONS:
-					print("* Saved "+filename)
+					print("\t* Saved "+filename)
 				browser.save_screenshot(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'Screenshots', filename))
 			browser.find_element_by_xpath('//button[@class="pv-s-profile-actions pv-s-profile-actions--connect artdeco-button artdeco-button--3 mr2 mt2"]').click()
 			time.sleep(3)
 			browser.find_element_by_xpath('//button[@class="artdeco-button artdeco-button--3 ml1"]').click()
 			SESSION_CONNECTION_COUNT += 1
 			if PRINT_ACTIONS:
-				print('* Sending the user an invitation to connect. Count = '+ str(SESSION_CONNECTION_COUNT))
+				print('\t* Sending the user an invitation to connect. Count = '+ str(SESSION_CONNECTION_COUNT))
 		except:
 			print("!!! Error connecting to " + TEMP_NAME)
-			if PRINT_DETAIL:
-				print(">>>> Name: "+TEMP_NAME+" Title: "+TEMP_JOB+" Location: "+TEMP_LOCATION)
-				print(">>>> Location Match: "+locationResult+" Title Match: "+ jobTitleMatches)
+			print(">>>> Name: "+TEMP_NAME+" Title: "+TEMP_JOB+" Location: "+TEMP_LOCATION)
+			print(">>>> Location Match: "+locationResult+" Title Match: "+ jobTitleMatches)
 			pass
 
 
@@ -386,7 +404,7 @@ def ReturnJobMatch(browser):
 	soup = BeautifulSoup(browser.page_source, PARSER)
 	rtn = ""
 	for selection in soup.findAll("h2", {"class": "pv-top-card-section__headline"}):
-		for job in JOBS_TO_CONNECT_WITH:
+		for job in SPECIFIC_USERS_TO_VIEW:
 			if job.lower() in selection.text.lower():
 				rtn = job
 				if VERBOSE:
