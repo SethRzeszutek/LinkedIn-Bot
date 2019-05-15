@@ -45,13 +45,21 @@ Other supported browsers will have their own drivers available. Links to some of
 You will need to install the [webdriver](https://sites.google.com/a/chromium.org/chromedriver/downloads) for Google Chrome then put it in the same folder than the bot if you are on Windows, or in the `/usr/bin` folder if you are on OS X.
 
 ## Configuration and Running
-To run the bot go into the directory where the bot is stored and type `python LinkedIn-Convert.py`
+To run the bot go into the directory where the bot is stored and type `python LinkedInBot-Convert.py`
 
 Before you run the bot, edit the configuration portion of the script. This will include your account login information (email, password, etc.) and other logical values to make the bot more of your own. It's that simple!
+
+Edit or create a `credentials.py` file for the config file to fetch from
 ```python
-#You can delete the import statements and the email and password variables, I did not want to push my passwords
-CONFIGURED_EMAIL = '' #-email
-CONFIGURED_PASSWORD = '' #-password
+email = ''
+password = ''
+```
+Then edit the `configure.py` file for other settings
+```python
+from credentials import *
+
+CONFIGURED_EMAIL = email #-email
+CONFIGURED_PASSWORD = password #-password
 
 BROWSER = "CHROME" #Options are CHROME or FIREFOX
 HEADLESS = True #-Run your script without any need for opening the browser! Only works for Firefox...
@@ -78,7 +86,7 @@ CONNECT_WITH_USERS = False #- Automatically connect with users (LinkedIn's limit
 LIMIT_CONNECTION = False #- Limit connections to a specific number
 CONNECTION_LIMIT = 5 #- Max connection amount
 RANDOMIZE_CONNECTING_WITH_USERS = False #- Randomize connecting
-JOBS_TO_CONNECT_WITH = ['Developer', 'HR']` #- Jobs to connect with
+JOBS_TO_CONNECT_WITH = ['Developer', 'HR'] #- Jobs to connect with
 
 ENDORSE_CONNECTIONS = False #- (UNTESTED) I personally don't reccomend doing this, I will get it working and test it. However, it weakens any signifigance the whole endorsement section has if you are not personally vouching for a person's skills
 RANDOMIZE_ENDORSING_CONNECTIONS = False #- Randomize endorsments
@@ -88,7 +96,7 @@ VERBOSE = False #- Extra printout's of what the bot is doing
 
 
 ## Run
-Once you have installed the required dependencies and edited the `configure.py` file, you can run the bot.
+Once you have installed the required dependencies, created `credentials.py`, and edited the `configure.py` file, you can run the bot.
 
 Make sure you are in the correct folder and run the following command: `python LinkedInBot.py`
 
