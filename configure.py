@@ -39,7 +39,7 @@ LOCATIONS = ['Ohio', 'Cleveland', 'Akron', 'Mentor', 'Chagrin', 'Solon', 'Westla
 
 # Amount of times it will scroll the page to load more potential connections
 # If you are using VIEW_SPECIFIC_USERS you might want to increase this value
-NUM_LAZY_LOAD_ON_MY_NETWORK_PAGE = 10
+NUM_LAZY_LOAD_ON_MY_NETWORK_PAGE = 5
 
 # Turn on Quick Connecting with Users
 CONNECT_WITH_USERS = True

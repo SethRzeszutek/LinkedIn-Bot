@@ -19,7 +19,11 @@ from os.path import join, dirname
 SESSION_CONNECTION_COUNT = 0
 TEMP_NAME=""
 TEMP_JOB=""
+TEMP_JOBMATCH=""
 TEMP_LOCATION=""
+TEMP_LOCATIONMATCH=""
+TEMP_PROFILE=[]
+CSV_DATA = [["Name","Title", "Title Match", "Location","Location Match", "Current Company"]]
 
 #dotenv_path = join(dirname(__file__), '.env')
 #load_dotenv(dotenv_path)
@@ -125,6 +129,8 @@ def LinkedInBot(browser):
 	global TEMP_NAME
 	global TEMP_JOB
 	global TEMP_LOCATION
+	global TEMP_PROFILE
+	global CSV_DATA
 
 	if SCREENSHOTS:
 		if PRINT_ACTIONS:
@@ -172,6 +178,11 @@ def LinkedInBot(browser):
 			TEMP_NAME = re.sub(regex, '', browser.title.replace(' | LinkedIn', ''))
 			TEMP_JOB = ReturnJobMatch(browser)
 			TEMP_LOCATION = ReturnLocationMatch(browser)
+			company = getCompany(browser)
+			TEMP_PROFILE = [TEMP_NAME, TEMP_JOB, TEMP_JOBMATCH, TEMP_LOCATION, TEMP_LOCATIONMATCH, company]
+			CSV_DATA.append(TEMP_PROFILE)
+			print(TEMP_PROFILE)
+			
 
 			if DELIMIT_BY_LOCATION and VIEW_SPECIFIC_USERS:
 				print("● Name: %-17s | T: %-2d | V: %-2d | Q: %-2d | Location: %-10s | Title: %-15s" %(TEMP_NAME, T, V, len(profilesQueued), TEMP_LOCATION, TEMP_JOB))
@@ -207,7 +218,6 @@ def LinkedInBot(browser):
 			profilesQueued.extend(GetNewProfileURLS(soup, profilesQueued))
 			profilesQueued = list(set(profilesQueued))
 
-			#browserTitle = (browser.title).encode('ascii', 'ignore').replace('  ',' ')
 			browserTitle = (browser.title).replace('  ',' ')
 
 			# 403 error
@@ -236,7 +246,7 @@ def LinkedInBot(browser):
 				timer = time.time() # Reset the timer
 			else:
 				time.sleep(random.uniform(5, 7)) # Otherwise, sleep to make sure everything loads
-
+		print(CSV_DATA)
 		print('\n!!! No more profiles to visit. Everything restarts with the network page...\n')
 
 
@@ -384,12 +394,14 @@ def LocationCheck(browser):
 		return False
 
 def ReturnLocationMatch(browser):
+	global TEMP_LOCATIONMATCH
 	soup = BeautifulSoup(browser.page_source, PARSER)
 	rtn = ""
 	locations = soup.findAll("h3", {"class": "pv-top-card-section__location"})
 	for p in locations:
 		for l in LOCATIONS:
 			if l.lower() in p.text.lower():
+				TEMP_LOCATIONMATCH = p.text.lower()
 				rtn = l
 				if VERBOSE:
 					print(">>>> Location Match: "+rtn)
@@ -399,11 +411,13 @@ def ReturnLocationMatch(browser):
 		return("X")
 
 def ReturnJobMatch(browser):
+	global TEMP_JOBMATCH
 	soup = BeautifulSoup(browser.page_source, PARSER)
 	rtn = ""
 	for selection in soup.findAll("h2", {"class": "pv-top-card-section__headline"}):
 		for job in SPECIFIC_USERS_TO_VIEW:
 			if job.lower() in selection.text.lower():
+				TEMP_JOBMATCH = selection.text.lower()
 				rtn = job
 				if VERBOSE:
 					print(">>>> Job Match: "+rtn)
@@ -412,6 +426,15 @@ def ReturnJobMatch(browser):
 	else:
 		return("X")
 
-
+def getCompany(browser):
+	soup = BeautifulSoup(browser.page_source, PARSER)
+	rtn = ""
+	for tag in soup.find("span", {"class": "pv-entity__secondary-title"}):
+		rtn = tag
+	#rtn = rtn.getText()
+	if rtn != "":
+		return rtn
+	else:
+		return("n/a")
 if __name__ == '__main__':
 	Launch()
