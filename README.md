@@ -12,7 +12,8 @@ When you view user's profile in LinkedIn they get notified that you have looked 
 * Automate viewing and connecting with users based on their job title and/or location!
 * Set a limit on how many connections you would like to connect with!
 * Watch the browser work away or try out Headless mode! (Currently only working in Firefox)
-* If connected store a screenshot of a users profile!
+* If connected store a screenshot or CSV of a users profile!
+* Able to retrive user company about 70% of the time! (Still working on this!)
 * If you have any suggestions open an issue and I or a contributor will gladly do our best to implement it if it aligns with the goals of the project! 
 
 ## Requirements
@@ -70,6 +71,8 @@ PRINT_SETTINGS = False #-See settings
 PARSER = "lxml" #-Parser for BeautifulSoup to use
 
 SCREENSHOT #-Screenshot each connection
+SAVECSV #-Save visited users in CSV
+
 #For lists, you can enter partial words to search more broadly.
 #For example, you can add 'Software' and titles like 'Software Developer' and 'Software Engineer' should work.
 
@@ -107,6 +110,22 @@ T: Number of profiles the bot tried to access;
 V: Number of profiles the bot actually visited (profiles you can access: rank 3 or less);
 
 Q: Number of profiles in queue.
+
+## POTENTIAL ISSUES
+
+* 2 Factor Authentication
+	* Solution: Working on a setting to give more time to get it, if it is enabled you cannot use headless mode
+* Stuck on `-> Scraping User URLs on Network tab.`
+	* Solution: I have encountered this issue before and restarting the script usually works
+* LinkedIn Security Email
+	* You were sent a pin to make sure its really you, either enter the pin if you are not in headless mode or restart the bot.
+	* At this point it might be best to tread lightly, as your account could be flagged and being monitored. However I am not certain on that.
+
+## DISCLAIMER
+
+The use of bots and scrapers are mentioned [here](https://www.linkedin.com/help/linkedin/answer/56347/prohibited-software-and-extensions?lang=en).
+Use this bot at your own risk. 
+Just to push more knowledege a judge in California ruled that they cannot prohibit bots([article](https://www.bbc.com/news/technology-40932487)).
 
 ## Note
 

@@ -7,7 +7,7 @@ CONFIGURED_PASSWORD = password
 """    ENVIRONMENT SETTINGS    """
 
 BROWSER = "Firefox"  # Options are CHROME or FIREFOX
-HEADLESS = True  # Headless doesnt seem to run correctly in Chrome, but works correctly in Firefox
+HEADLESS = False  # Headless doesnt seem to run correctly in Chrome, but works correctly in Firefox
 PRINT_ACTIONS = True
 PRINT_SETTINGS = False
 
@@ -20,6 +20,8 @@ PARSER = "lxml"
 
 # If connection is successful, store a screenshot of the user's page
 SCREENSHOTS = True
+# Save users viewed in CSV
+SAVECSV = True
 
 # Turn on Title Filter
 VIEW_SPECIFIC_USERS = True
