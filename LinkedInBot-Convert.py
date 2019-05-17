@@ -523,4 +523,8 @@ def getCompany(browser):
 
 
 if __name__ == '__main__':
-	Launch()
+	try:
+		Launch()
+	except:
+		print("\nProgram Stopped Running")
+
