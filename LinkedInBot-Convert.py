@@ -3,7 +3,7 @@
 # Updated Author: Seth Rzeszutek
 # Previous Authors: Matt Flood and helloitsim
 
-import os, random, sys, time, re
+import os, random, sys, time, re, csv, datetime
 from configure import *
 from selenium import webdriver
 if BROWSER.upper() == "CHROME":
@@ -19,7 +19,13 @@ from os.path import join, dirname
 SESSION_CONNECTION_COUNT = 0
 TEMP_NAME=""
 TEMP_JOB=""
+TEMP_JOBMATCH=""
 TEMP_LOCATION=""
+TEMP_LOCATIONMATCH=""
+TEMP_PROFILE=[]
+CONNECTED = False
+TIME = str(datetime.datetime.now().time())
+CSV_DATA = [["Name","Title", "Title Match", "Location","Location Match", "Current Company","Connected"]]
 
 #dotenv_path = join(dirname(__file__), '.env')
 #load_dotenv(dotenv_path)
@@ -125,6 +131,9 @@ def LinkedInBot(browser):
 	global TEMP_NAME
 	global TEMP_JOB
 	global TEMP_LOCATION
+	global TEMP_PROFILE
+	global CSV_DATA
+	global CONNECTED
 
 	if SCREENSHOTS:
 		if PRINT_ACTIONS:
@@ -135,9 +144,20 @@ def LinkedInBot(browser):
 				print("\t* Created Screenshot Folder")
 		except FileExistsError:
 			pass
+	header = ["Name","Title", "Title Match", "Location","Location Match", "Current Company", "Connected"]
+	if SAVECSV:
+		if PRINT_ACTIONS:
+			print("-> Enabled Save as CSV")
+		try:
+			os.makedirs("CSV")
+			if PRINT_ACTIONS:
+				print("\t* Created CSV Folder")
+		except FileExistsError:
+			pass
+		createCSV(header, TIME)
 
 	if PRINT_ACTIONS:
-		print('-> Scraping User URLs on Network tab.\n')
+		print('-> Scraping User URLs on Network tab.')
 
 	# Infinite loop
 	while True:
@@ -157,13 +177,14 @@ def LinkedInBot(browser):
 
 		V += 1
 		if PRINT_ACTIONS:
-			print('\n\t* Finished gathering User URLs.\n')
-			print("--> Starting Process\n\n")
+			print('\t* Finished gathering User URLs.\n')
+			print("--> Starting Process\n")
 
 		while profilesQueued:
 			if (SESSION_CONNECTION_COUNT>=CONNECTION_LIMIT):
 				print("---Max connections reached stopping program---")
 				exit()
+			CONNECTED = False
 			shuffle(profilesQueued)
 			profileID = profilesQueued.pop()
 			browser.get('https://www.linkedin.com'+profileID)
@@ -172,6 +193,15 @@ def LinkedInBot(browser):
 			TEMP_NAME = re.sub(regex, '', browser.title.replace(' | LinkedIn', ''))
 			TEMP_JOB = ReturnJobMatch(browser)
 			TEMP_LOCATION = ReturnLocationMatch(browser)
+			#company = getCompany(browser)
+			company ="n/a"
+			if " at " in TEMP_JOBMATCH:
+				company = TEMP_JOBMATCH.split(" at ",1)[1] 
+			elif " for " in TEMP_JOBMATCH:
+				company = TEMP_JOBMATCH.split(" for ",1)[1] 
+
+			
+			
 
 			if DELIMIT_BY_LOCATION and VIEW_SPECIFIC_USERS:
 				print("● Name: %-17s | T: %-2d | V: %-2d | Q: %-2d | Location: %-10s | Title: %-15s" %(TEMP_NAME, T, V, len(profilesQueued), TEMP_LOCATION, TEMP_JOB))
@@ -196,6 +226,15 @@ def LinkedInBot(browser):
 					elif random.choice([True, False]):
 						ConnectWithUser(browser)
 
+			TEMP_PROFILE = [TEMP_NAME, TEMP_JOB, TEMP_JOBMATCH, TEMP_LOCATION, TEMP_LOCATIONMATCH, company, CONNECTED]
+			if SAVECSV:
+				addToCSV(TEMP_PROFILE,TIME)
+				#CSV_DATA.append(TEMP_PROFILE)
+				if VERBOSE:
+					print("-> Temp Profile List")
+					print(TEMP_PROFILE)
+
+			
 			# Add the ID to the visitedUsersFile
 			with open('visitedUsers.txt', 'a') as visitedUsersFile:
 				visitedUsersFile.write((profileID)+'\r\n')
@@ -207,7 +246,6 @@ def LinkedInBot(browser):
 			profilesQueued.extend(GetNewProfileURLS(soup, profilesQueued))
 			profilesQueued = list(set(profilesQueued))
 
-			#browserTitle = (browser.title).encode('ascii', 'ignore').replace('  ',' ')
 			browserTitle = (browser.title).replace('  ',' ')
 
 			# 403 error
@@ -236,8 +274,10 @@ def LinkedInBot(browser):
 				timer = time.time() # Reset the timer
 			else:
 				time.sleep(random.uniform(5, 7)) # Otherwise, sleep to make sure everything loads
-
 		print('\n!!! No more profiles to visit. Everything restarts with the network page...\n')
+		if SAVECSV and VERBOSE:
+			print("-> Data to be exported to CSV")
+			print(CSV_DATA)
 
 
 def NavigateToMyNetworkPage(browser):
@@ -263,6 +303,7 @@ def ConnectWithUser(browser):
 
 	soup = BeautifulSoup(browser.page_source, PARSER)
 	global SESSION_CONNECTION_COUNT
+	global CONNECTED
 	jobTitleMatches = False
 	# I know not that efficient of a loop but BeautifulSoup and Selenium are
 	# giving me a hard time finding the specifc h2 element that contain's user's job title
@@ -282,13 +323,14 @@ def ConnectWithUser(browser):
 			browser.find_element_by_xpath('//button[@class="pv-s-profile-actions pv-s-profile-actions--connect artdeco-button artdeco-button--3 mr2 mt2"]').click()
 			time.sleep(3)
 			browser.find_element_by_xpath('//button[@class="artdeco-button artdeco-button--3 ml1"]').click()
+			CONNECTED = True
 			SESSION_CONNECTION_COUNT += 1
 			if PRINT_ACTIONS:
 				print('\t* Sending the user an invitation to connect. Count = '+ str(SESSION_CONNECTION_COUNT))
 		except:
 			print("!!! Error connecting to " + TEMP_NAME)
 			print(">>>> Name: "+TEMP_NAME+" Title: "+TEMP_JOB+" Location: "+TEMP_LOCATION)
-			print(">>>> Location Match: "+locationResult+" Title Match: "+ jobTitleMatches)
+			print(">>>> Location Match: "+ReturnLocationMatch+" Title Match: "+ jobTitleMatches)
 			pass
 
 
@@ -369,6 +411,11 @@ def ScrollToBottomAndWaitForLoad(browser):
 	time.sleep(4)
 
 def LocationCheck(browser):
+	'''
+	Checks if the location of the user matches your list of locations
+	browser = selenium webdriver
+	returns true or false
+	'''
 	soup = BeautifulSoup(browser.page_source, PARSER)
 	if(DELIMIT_BY_LOCATION):
 		locations = soup.findAll("h3", {"class": "pv-top-card-section__location"})
@@ -384,12 +431,20 @@ def LocationCheck(browser):
 		return False
 
 def ReturnLocationMatch(browser):
+	'''
+	Gets the location that matches your settings and also sets TEMP_LOCATIONMATCH
+	browser = selenium webdriver
+	returns the locaiton as a string
+	'''
+	global TEMP_LOCATIONMATCH
+	TEMP_LOCATIONMATCH = "X" #if this doesnt change it, it could have the previous connections data
 	soup = BeautifulSoup(browser.page_source, PARSER)
 	rtn = ""
 	locations = soup.findAll("h3", {"class": "pv-top-card-section__location"})
 	for p in locations:
 		for l in LOCATIONS:
 			if l.lower() in p.text.lower():
+				TEMP_LOCATIONMATCH = " ".join((p.text.lower()).split())
 				rtn = l
 				if VERBOSE:
 					print(">>>> Location Match: "+rtn)
@@ -399,11 +454,20 @@ def ReturnLocationMatch(browser):
 		return("X")
 
 def ReturnJobMatch(browser):
+	'''
+	Gets the job that matches your settings and also sets TEMP_JOBMATCH
+	browser = selenium webdriver
+	returns the job as a string
+	'''
+
+	global TEMP_JOBMATCH
+	TEMP_JOBMATCH = "X" #if this doesnt change it, it could have the previous connections data
 	soup = BeautifulSoup(browser.page_source, PARSER)
 	rtn = ""
 	for selection in soup.findAll("h2", {"class": "pv-top-card-section__headline"}):
 		for job in SPECIFIC_USERS_TO_VIEW:
 			if job.lower() in selection.text.lower():
+				TEMP_JOBMATCH = " ".join((selection.text.lower()).split())
 				rtn = job
 				if VERBOSE:
 					print(">>>> Job Match: "+rtn)
@@ -412,6 +476,55 @@ def ReturnJobMatch(browser):
 	else:
 		return("X")
 
+def createCSV(data, time):
+	'''
+	Creates initial CSV file
+	data is the list that will get added to the file(in this case its the headers)
+	time is the time at creation of this file
+	'''
+	filename = 'Linked-In-'+time+'.csv'
+	with open(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'CSV', filename), 'w') as csvFile:
+		writer = csv.writer(csvFile)
+		writer.writerow(data)
+	csvFile.close()
+
+def addToCSV(data, time):
+	'''
+	Appends to the CSV file that matches the name with that time
+	data is the list that will get added to the file
+	time is the time at creation of this file
+	'''
+	filename = 'Linked-In-'+time+'.csv'
+	with open(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'CSV', filename), 'a') as csvFile:
+		writer = csv.writer(csvFile)
+		writer.writerow(data)
+	csvFile.close()
+
+def getCompany(browser):
+	'''
+	Get first item in work experience on Linkedin
+	browser = selenium webdriver
+	Returns a single string that should be the job or nothing
+	'''
+	#A decent amount of false positives on this, more so than it makes me comfortable to actually push it. 
+	#WIll probably revisit it but until then it wont be used.
+	soup = BeautifulSoup(browser.page_source, PARSER)
+	rtn = ""
+	for tag in soup.findAll("span", {"class": "pv-entity__secondary-title"}):
+		rtn = (tag.get_text())
+		break
+	
+	if rtn != "":
+		return rtn
+	else:
+		return("n/a")
+
+
+
 
 if __name__ == '__main__':
-	Launch()
+	try:
+		Launch()
+	except:
+		print("\nProgram Stopped Running")
+
