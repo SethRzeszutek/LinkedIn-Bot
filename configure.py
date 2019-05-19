@@ -8,6 +8,7 @@ CONFIGURED_PASSWORD = password
 
 BROWSER = "Firefox"  # Options are CHROME or FIREFOX
 HEADLESS = False  # Headless doesnt seem to run correctly in Chrome, but works correctly in Firefox
+MENU = True
 PRINT_ACTIONS = True
 PRINT_SETTINGS = False
 
