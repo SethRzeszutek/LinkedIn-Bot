@@ -8,9 +8,13 @@ CONFIGURED_PASSWORD = password
 
 BROWSER = "Firefox"  # Options are CHROME or FIREFOX
 HEADLESS = False  # Headless doesnt seem to run correctly in Chrome, but works correctly in Firefox
-MENU = True
+MODE = "ANALYSIS" #Different modes: View/Connect or Analysis
+MENU = False
 PRINT_ACTIONS = True
 PRINT_SETTINGS = False
+
+# WARNING, THIS SETTING HAS THE POTENTIAL TO GIVE HIGH FALSE POSITIVES
+DEEP_JOB_SEARCH = True #For any company that is unavailable in the current search, it performs a second less accurate check. Delimited by an asterik(*)
 
 """    BEAUTIFUL SOUP SETTINGS  """
 
@@ -42,7 +46,7 @@ LOCATIONS = ['Ohio', 'Cleveland', 'Akron', 'Mentor', 'Chagrin', 'Solon', 'Westla
 
 # Amount of times it will scroll the page to load more potential connections
 # If you are using VIEW_SPECIFIC_USERS you might want to increase this value
-NUM_LAZY_LOAD_ON_MY_NETWORK_PAGE = 5
+NUM_LAZY_LOAD = 15
 
 # Turn on Quick Connecting with Users
 CONNECT_WITH_USERS = True

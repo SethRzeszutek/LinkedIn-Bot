@@ -18,5 +18,7 @@ ENV/
 visitedUsers.txt
 credentials.py
 Screenshots/
+CSV/
+Analysis?
 geckodriver
 geckodriver.log

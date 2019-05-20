@@ -82,7 +82,7 @@ SPECIFIC_USERS_TO_VIEW = ['CEO', 'CTO', 'HR'] #- Titles/Jobs to filter by
 DELIMIT_BY_LOCATION = False #- Filter by a connection's location
 LOCATIONS = ['Ohio','Cleveland','Akron'] #- Locations
 
-NUM_LAZY_LOAD_ON_MY_NETWORK_PAGE = 10 #- How often it scrolls down the page, raise this number if you have view specific user on.
+NUM_LAZY_LOAD = 10 #- How often it scrolls down the page, raise this number if you have view specific user on.
 
 CONNECT_WITH_USERS = False #- Automatically connect with users (LinkedIn's limit is 15,000)
 
