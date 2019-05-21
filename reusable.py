@@ -51,19 +51,32 @@ def ReturnLocationMatch(browser):
 	temp_locationmatch = "X" #if this doesnt change it, it could have the previous connections data
 	soup = BeautifulSoup(browser.page_source, PARSER)
 	rtn = ["",""]
-	locations = soup.findAll("h3", {"class": "pv-top-card-section__location"})
-	for p in locations:
+
+	if MODE == "VIEW/CONNECT":
+		locations = soup.findAll("h3", {"class": "pv-top-card-section__location"})
+		for p in locations:
+			for l in LOCATIONS:
+				if l.lower() in p.text.lower():
+					temp_locationmatch = str(" ".join((p.text.lower()).split()))
+					location = str(l)
+					print(location + " : " + temp_locationmatch)
+					rtn = [location, temp_locationmatch]
+					if VERBOSE:
+						print(">>>> Location Match: "+rtn)
+	elif MODE == "ANALYSIS":
+		ul = soup.find("ul", {"class": "pv-top-card-v3--list"})
+		ul = ul.find_next("ul", {"class": "pv-top-card-v3--list"})
+		li = ul.find_next("li")
 		for l in LOCATIONS:
-			if l.lower() in p.text.lower():
-				temp_locationmatch = str(" ".join((p.text.lower()).split()))
+			if l.lower() in li.text.lower():
+				temp_locationmatch = str(" ".join((li.text.lower()).split()))
 				location = str(l)
-				print(location + " : " + temp_locationmatch)
 				rtn = [location, temp_locationmatch]
 				if VERBOSE:
 					print(">>>> Location Match: "+rtn)
-	if rtn[0] == "":
+	if not rtn[0]:
 		rtn[0] = "X"
-	if rtn[1] == "":
+	if not rtn[1]:
 		rtn[1] = "X"
 	else:
 		return rtn
@@ -77,18 +90,31 @@ def ReturnJobMatch(browser):
 	temp_jobmatch = "X" #if this doesnt change it, it could have the previous connections data
 	soup = BeautifulSoup(browser.page_source, PARSER)
 	rtn = ["",""]
-	for selection in soup.findAll("h2", {"class": "pv-top-card-section__headline"}):
+	if MODE == "VIEW/CONNECT":
+		for selection in soup.findAll("h2", {"class": "pv-top-card-section__headline"}):
+			for job in SPECIFIC_USERS_TO_VIEW:
+				if job.lower() in selection.text.lower():
+					temp_jobmatch = (" ".join((selection.text.lower()).split()))
+					jobtitle = str(job)
+					print(jobtitle + " : " + temp_jobmatch)
+					rtn = [jobtitle, temp_jobmatch]
+					if VERBOSE:
+						print(">>>> Job Match: "+rtn)
+	elif MODE == "ANALYSIS":
+		ul = soup.find("ul", {"class": "pv-top-card-v3--list"})
+		li = ul.find_next("h2")
+		print(li)
 		for job in SPECIFIC_USERS_TO_VIEW:
-			if job.lower() in selection.text.lower():
-				temp_jobmatch = (" ".join((selection.text.lower()).split()))
-				jobtitle = str(job)
-				print(jobtitle + " : " + temp_jobmatch)
-				rtn = [jobtitle, temp_jobmatch]
-				if VERBOSE:
-					print(">>>> Job Match: "+rtn)
-	if rtn[0] == "":
+				if job.lower() in li.text.lower():
+					temp_jobmatch = (" ".join((li.text.lower()).split()))
+					jobtitle = str(job)
+					print(jobtitle + " : " + temp_jobmatch)
+					rtn = [jobtitle, temp_jobmatch]
+					if VERBOSE:
+						print(">>>> Job Match: "+rtn)
+	if not rtn[0]:
 		rtn[0] = "X"
-	if rtn[1] == "":
+	if not rtn[1]:
 		rtn[1] = "X"
 	else:
 		return rtn

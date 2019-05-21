@@ -96,17 +96,19 @@ def Analysis(browser):
 			locations = ReturnLocationMatch(browser) #location and temp_locationmatch
 			#company = GetCompany(browser)
 			company ="n/a"
-			if " at " in jobs[1]:
-				company = jobs[1].split(" at ",1)[1]
+			location = locations[0]
+			job = jobs[0]
+			templocation = locations[1]
+			tempjob = jobs[1]
+			if " at " in tempjob:
+				company = tempjob.split(" at ",1)[1]
 			elif " for " in jobs[0]:
-				company = jobs[1].split(" for ",1)[1]
+				company = tempjob.split(" for ",1)[1]
 
 			if DEEP_JOB_SEARCH and company != "n/a":
 				companyresult = GetCompany(browser)
 				if companyresult != "n/a":
 					company = ("* "+companyresult)
-			location = locations[0]
-			job = jobs[0]
 
 
 			if DELIMIT_BY_LOCATION and VIEW_SPECIFIC_USERS:
@@ -183,6 +185,7 @@ def NavigateToConnectionPage(browser):
 	
 	browser.get('https://www.linkedin.com/mynetwork/invite-connect/connections/')
 	connectionCount = GetConnectionCount(browser)
+	NumScrollsForAllConnections = connectionCount/8
 	for counter in range(1,NUM_LAZY_LOAD):
 		ScrollToBottomAndWaitForLoad(browser)
 
