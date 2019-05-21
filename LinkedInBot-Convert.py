@@ -60,16 +60,16 @@ def StartBrowser():
 		print("PRINT_SETTINGS:"+str(PRINT_SETTINGS))
 		print("PARSER:"+PARSER)
 		print("SCREEENSHOTS:"+str(SCREENSHOTS))
-		print("VIEW_SPECIFIC_USERS:"+str(VIEW_SPECIFIC_USERS))
-		print("SPECIFIC_USERS_TO_VIEW:"+', '.join(SPECIFIC_USERS_TO_VIEW))
-		print("DELIMIT_BY_LOCATION:"+str(DELIMIT_BY_LOCATION))
-		print("LOCATIONS:"+', '.join(LOCATIONS))
-		print("NUM_LAZY_LOAD_ON_MY_NETWORK_PAGE:"+str(NUM_LAZY_LOAD_ON_MY_NETWORK_PAGE))
+		print("VIEW_SPECIFIC_TITLES:"+str(VIEW_SPECIFIC_TITLES))
+		print("TITLES_TO_VIEW_CONNECT_WITH:"+', '.join(TITLES_TO_VIEW_CONNECT_WITH))
+		print("CONNECT_BY_LOCATION:"+str(CONNECT_BY_LOCATION))
+		print("LOCATIONS_TO_CONNECT:"+', '.join(LOCATIONS_TO_CONNECT))
+		print("LAZY_LOAD_NUM:"+str(LAZY_LOAD_NUM))
 		print("CONNECT_WITH_USERS:"+str(CONNECT_WITH_USERS))
 		print("LIMIT_CONNECTION:"+str(LIMIT_CONNECTION))
 		print("CONNECTION_LIMIT:"+str(CONNECTION_LIMIT))
 		print("RANDOMIZE_CONNECTING_WITH_USERS:"+str(RANDOMIZE_CONNECTING_WITH_USERS))
-		print("JOBS_TO_CONNECT_WITH:"+', '.join(JOBS_TO_CONNECT_WITH))
+		print("TITLES_TO_VIEW_CONNECT_WITH:"+', '.join(TITLES_TO_VIEW_CONNECT_WITH))
 		print("VERBOSE:"+str(VERBOSE))
 		print("-----------------------------\n\n")
 
@@ -188,11 +188,22 @@ def LinkedInBot(browser):
 			shuffle(profilesQueued)
 			profileID = profilesQueued.pop()
 			browser.get('https://www.linkedin.com'+profileID)
-			locationMatches = LocationCheck(browser)
+
+			title_check = False
+	
+			title_check = TitleCheck(browser)
+			location_check = LocationCheck(browser)
+
+			if(CONNECT_BY_LOCATION):
+				locationMatches = LocationCheck(browser)
+				if VERBOSE:
+					print("Location Matches: "+str(locationMatches))
+			else:
+				locationMatches = False
 			regex = r'\(.*?\)'
 			TEMP_NAME = re.sub(regex, '', browser.title.replace(' | LinkedIn', ''))
-			TEMP_JOB = ReturnJobMatch(browser)
-			TEMP_LOCATION = ReturnLocationMatch(browser)
+			TEMP_JOB = JobMatch(browser)
+			TEMP_LOCATION = LocationMatch(browser)
 			#company = getCompany(browser)
 			company ="n/a"
 			if " at " in TEMP_JOBMATCH:
@@ -203,33 +214,45 @@ def LinkedInBot(browser):
 			
 			
 
-			if DELIMIT_BY_LOCATION and VIEW_SPECIFIC_USERS:
+			if CONNECT_BY_LOCATION and VIEW_SPECIFIC_TITLES:
 				print("● Name: %-17s | T: %-2d | V: %-2d | Q: %-2d | Location: %-10s | Title: %-15s" %(TEMP_NAME, T, V, len(profilesQueued), TEMP_LOCATION, TEMP_JOB))
-			elif DELIMIT_BY_LOCATION:
+			elif CONNECT_BY_LOCATION:
 				print("● Name: %-17s | T: %-2d | V: %-2d | Q: %-2d | Location: %-10s" %(TEMP_NAME, T, V, len(profilesQueued), TEMP_LOCATION))
-			elif VIEW_SPECIFIC_USERS:
+			elif VIEW_SPECIFIC_TITLES:
 				print("● Name: %-17s | T: %-2d | V: %-2d | Q: %-2d | Title: %-15s" %(TEMP_NAME, T, V, len(profilesQueued), TEMP_JOB))
 			else:
 				print("● Name: %-17s | T: %-2d | V: %-2d | Q: %-2d" %(TEMP_NAME, T, V, len(profilesQueued)))
 
 			# Connect with users if the flag is turned on and matches your criteria
-			if CONNECT_WITH_USERS and locationMatches:
-				if LIMIT_CONNECTION:
-					if (SESSION_CONNECTION_COUNT<CONNECTION_LIMIT):
+			# NOTE: FindProfileURLsInNetworkPage is already filtering by user's title, so before it is even added to the list it is filtered by title if the option is on
+			if CONNECT_WITH_USERS and CONNECT_BY_LOCATION:
+				if location_check:
+					if LIMIT_CONNECTION and (SESSION_CONNECTION_COUNT<CONNECTION_LIMIT):
 						if not RANDOMIZE_CONNECTING_WITH_USERS:
 							ConnectWithUser(browser)
 						elif random.choice([True, False]):
 							ConnectWithUser(browser)
+					elif not LIMIT_CONNECTION:
+						if not RANDOMIZE_CONNECTING_WITH_USERS:
+							ConnectWithUser(browser)
+						elif random.choice([True, False]):
+							ConnectWithUser(browser)
+			elif CONNECT_WITH_USERS:
+				if LIMIT_CONNECTION and (SESSION_CONNECTION_COUNT<CONNECTION_LIMIT):
+					if not RANDOMIZE_CONNECTING_WITH_USERS:
+						ConnectWithUser(browser)
+					elif random.choice([True, False]):
+						ConnectWithUser(browser)
 				elif not LIMIT_CONNECTION:
 					if not RANDOMIZE_CONNECTING_WITH_USERS:
 						ConnectWithUser(browser)
 					elif random.choice([True, False]):
 						ConnectWithUser(browser)
+			
 
 			TEMP_PROFILE = [TEMP_NAME, TEMP_JOB, TEMP_JOBMATCH, TEMP_LOCATION, TEMP_LOCATIONMATCH, company, CONNECTED]
 			if SAVECSV:
 				addToCSV(TEMP_PROFILE,TIME)
-				#CSV_DATA.append(TEMP_PROFILE)
 				if VERBOSE:
 					print("-> Temp Profile List")
 					print(TEMP_PROFILE)
@@ -284,13 +307,13 @@ def NavigateToMyNetworkPage(browser):
 	"""
 	Navigate to the my network page and scroll to the bottom and let the lazy loading
 	go to be able to grab more potential users in your network. It is recommended to
-	increase the NUM_LAZY_LOAD_ON_MY_NETWORK_PAGE value if you are using the variable
-	SPECIFIC_USERS_TO_VIEW.
+	increase the LAZY_LOAD_NUM value if you are using the variable
+	TITLES_TO_VIEW_CONNECT_WITH.
 	browser: the selenium browser used to interact with the page.
 	"""
 
 	browser.get('https://www.linkedin.com/mynetwork/')
-	for counter in range(1,NUM_LAZY_LOAD_ON_MY_NETWORK_PAGE):
+	for counter in range(1,LAZY_LOAD_NUM):
 		ScrollToBottomAndWaitForLoad(browser)
 
 
@@ -301,37 +324,25 @@ def ConnectWithUser(browser):
 	browse: the selenium browser used to interact with the page.
 	"""
 
-	soup = BeautifulSoup(browser.page_source, PARSER)
 	global SESSION_CONNECTION_COUNT
 	global CONNECTED
-	jobTitleMatches = False
-	# I know not that efficient of a loop but BeautifulSoup and Selenium are
-	# giving me a hard time finding the specifc h2 element that contain's user's job title
-	for selection in soup.findAll("h2", {"class": "pv-top-card-section__headline"}):
-		for job in JOBS_TO_CONNECT_WITH:
-			if job in selection.getText():
-				jobTitleMatches = True
-				break
-	locationResult = LocationCheck(browser)
-	if jobTitleMatches and locationResult:
-		try:
-			if SCREENSHOTS:
-				filename = TEMP_NAME+"-connected.png"
-				if PRINT_ACTIONS:
-					print("\t* Saved "+filename)
-				browser.save_screenshot(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'Screenshots', filename))
-			browser.find_element_by_xpath('//button[@class="pv-s-profile-actions pv-s-profile-actions--connect artdeco-button artdeco-button--3 mr2 mt2"]').click()
-			time.sleep(3)
-			browser.find_element_by_xpath('//button[@class="artdeco-button artdeco-button--3 ml1"]').click()
-			CONNECTED = True
-			SESSION_CONNECTION_COUNT += 1
+	try:
+		if SCREENSHOTS:
+			filename = TEMP_NAME+"-connected.png"
 			if PRINT_ACTIONS:
-				print('\t* Sending the user an invitation to connect. Count = '+ str(SESSION_CONNECTION_COUNT))
-		except:
-			print("!!! Error connecting to " + TEMP_NAME)
-			print(">>>> Name: "+TEMP_NAME+" Title: "+TEMP_JOB+" Location: "+TEMP_LOCATION)
-			print(">>>> Location Match: "+ReturnLocationMatch+" Title Match: "+ jobTitleMatches)
-			pass
+				print("\t* Saved "+filename)
+			browser.save_screenshot(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'Screenshots', filename))
+		browser.find_element_by_xpath('//button[@class="pv-s-profile-actions pv-s-profile-actions--connect ml2 artdeco-button artdeco-button--2 artdeco-button--primary ember-view"]').click()
+		time.sleep(3)
+		browser.find_element_by_xpath('//button[@class="artdeco-button artdeco-button--3 ml1"]').click()
+		CONNECTED = True
+		SESSION_CONNECTION_COUNT += 1
+		if PRINT_ACTIONS:
+			print('\t* Sending the user an invitation to connect. Count = '+ str(SESSION_CONNECTION_COUNT))
+	except:
+		print("!!! Error connecting to " + TEMP_NAME)
+		print(">>>> Name: "+TEMP_NAME+" Title: "+TEMP_JOB+" Location: "+TEMP_LOCATION)
+		pass
 
 
 def GetNewProfileURLS(soup, profilesQueued):
@@ -369,12 +380,12 @@ def FindProfileURLsInNetworkPage(soup, profilesQueued, profileURLS, visitedUsers
 	try:
 		for a in soup.find_all('a', class_='discover-person-card__link'):
 			if ValidateURL(a['href'], profileURLS, profilesQueued, visitedUsers):
-				if VIEW_SPECIFIC_USERS:
+				if VIEW_SPECIFIC_TITLES:
 					for span in a.find_all('span', class_='discover-person-card__occupation'):
-						for occupation in SPECIFIC_USERS_TO_VIEW:
+						for occupation in TITLES_TO_VIEW_CONNECT_WITH:
 							if VERBOSE:
 								print(">>>> "+occupation)
-							if occupation.lower() in span.text.lower(): #replicate this elsewhere
+							if occupation.lower() in span.text.lower():
 								if VERBOSE:
 									print(">>>> "+a['href'])
 								newProfileURLS.append(a['href'])
@@ -417,20 +428,37 @@ def LocationCheck(browser):
 	returns true or false
 	'''
 	soup = BeautifulSoup(browser.page_source, PARSER)
-	if(DELIMIT_BY_LOCATION):
-		locations = soup.findAll("h3", {"class": "pv-top-card-section__location"})
-		for p in locations:
-			for l in LOCATIONS:
-				if VERBOSE:
-					print(">>>> Web Location: "+str(p)+" Settings Location: "+str(l))
-				if l.lower() in p.text.lower():
-					return True
-				else:
-					return False
-	else:
-		return False
+	
+	ul = soup.find("ul", {"class": "pv-top-card-v3--list"})
+	ul = ul.find_next("ul", {"class": "pv-top-card-v3--list"})
+	li = ul.find_next("li")
+	for l in LOCATIONS_TO_CONNECT:
+		if VERBOSE:
+			print(">>>> Web Location: "+str(li.text)+" Settings Location: "+str(l))
+		if l.lower() in li.text.lower():
+			return True
+		else:
+			return False
 
-def ReturnLocationMatch(browser):
+def TitleCheck(browser):
+	'''
+	Checks if the job/title of the user matches your list of job/titles
+	browser = selenium webdriver
+	returns true or false
+	'''
+	soup = BeautifulSoup(browser.page_source, PARSER)
+
+	ul = soup.find("ul", {"class": "pv-top-card-v3--list"})
+	li = ul.find_next("h2")
+	for job in TITLES_TO_VIEW_CONNECT_WITH:
+		if VERBOSE:
+			print(">>>> Web Job/Title: "+str(li.text)+" Settings Job/Title: "+str(job))
+		if job.lower() in li.text.lower():
+			return True
+		else:
+			return False
+
+def LocationMatch(browser):
 	'''
 	Gets the location that matches your settings and also sets TEMP_LOCATIONMATCH
 	browser = selenium webdriver
@@ -440,20 +468,23 @@ def ReturnLocationMatch(browser):
 	TEMP_LOCATIONMATCH = "X" #if this doesnt change it, it could have the previous connections data
 	soup = BeautifulSoup(browser.page_source, PARSER)
 	rtn = ""
-	locations = soup.findAll("h3", {"class": "pv-top-card-section__location"})
-	for p in locations:
-		for l in LOCATIONS:
-			if l.lower() in p.text.lower():
-				TEMP_LOCATIONMATCH = " ".join((p.text.lower()).split())
-				rtn = l
-				if VERBOSE:
-					print(">>>> Location Match: "+rtn)
+	ul = soup.find("ul", {"class": "pv-top-card-v3--list"})
+	ul = ul.find_next("ul", {"class": "pv-top-card-v3--list"})
+	li = ul.find_next("li")
+	for l in LOCATIONS_TO_CONNECT:
+		if l.lower() in li.text.lower():
+			TEMP_LOCATIONMATCH = str(" ".join((li.text.lower()).split()))
+			location = str(l)
+			rtn = location
+			if VERBOSE:
+				print(">>>> Location Match: "+rtn)
+				print(">>>>"+location + " : " + TEMP_LOCATIONMATCH)
 	if rtn != "":
 		return rtn
 	else:
 		return("X")
 
-def ReturnJobMatch(browser):
+def JobMatch(browser):
 	'''
 	Gets the job that matches your settings and also sets TEMP_JOBMATCH
 	browser = selenium webdriver
@@ -464,13 +495,16 @@ def ReturnJobMatch(browser):
 	TEMP_JOBMATCH = "X" #if this doesnt change it, it could have the previous connections data
 	soup = BeautifulSoup(browser.page_source, PARSER)
 	rtn = ""
-	for selection in soup.findAll("h2", {"class": "pv-top-card-section__headline"}):
-		for job in SPECIFIC_USERS_TO_VIEW:
-			if job.lower() in selection.text.lower():
-				TEMP_JOBMATCH = " ".join((selection.text.lower()).split())
-				rtn = job
-				if VERBOSE:
-					print(">>>> Job Match: "+rtn)
+	ul = soup.find("ul", {"class": "pv-top-card-v3--list"})
+	li = ul.find_next("h2")
+	for job in TITLES_TO_VIEW_CONNECT_WITH:
+		if job.lower() in li.text.lower():
+			TEMP_JOBMATCH = (" ".join((li.text.lower()).split()))
+			jobtitle = str(job)
+			rtn = jobtitle
+			if VERBOSE:
+				print(">>>> Job Match: "+rtn)
+				print(">>>>"+jobtitle + " : " + TEMP_JOBMATCH)
 	if rtn != "":
 		return rtn
 	else:
@@ -523,8 +557,11 @@ def getCompany(browser):
 
 
 if __name__ == '__main__':
+	'''
 	try:
 		Launch()
 	except:
 		print("\nProgram Stopped Running")
+	'''
+	Launch()
 

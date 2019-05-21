@@ -6,7 +6,7 @@ CONFIGURED_PASSWORD = password
 
 """    ENVIRONMENT SETTINGS    """
 
-BROWSER = "Firefox"  # Options are CHROME or FIREFOX
+BROWSER = "Chrome"  # Options are CHROME or FIREFOX
 HEADLESS = False  # Headless doesnt seem to run correctly in Chrome, but works correctly in Firefox
 PRINT_ACTIONS = True
 PRINT_SETTINGS = False
@@ -24,24 +24,28 @@ SCREENSHOTS = True
 SAVECSV = True
 
 # Turn on Title Filter
-VIEW_SPECIFIC_USERS = True
+VIEW_SPECIFIC_TITLES = True
 
 """ For lists, you can enter partial words to search more broadly.
-    For example, you can add 'Software' and titles like 'Software Developer' and 'Software Engineer' should work. """
+    For example, you can add 'Software' and titles like 'Software Developer' and 'Software Engineer' should work.
+    However, if you use a phrase like 'Developer' it will add 'Software Developer' and other things like 'Community Developer' """
 
 # Specific titles to filter by
-SPECIFIC_USERS_TO_VIEW = ['CEO', 'CTO', 'Developer', 'HR', 'Recruiter', 'Software', 'Software Engineer', 'Python',
-                          'Javascript', 'Node']
+#TITLES_TO_VIEW = ['CEO', 'CTO', 'Developer', 'HR', 'Recruiter', 'Software', 'Software Engineer', 'Python','Javascript', 'Node']
+
+
+# List of job titles to connect with
+TITLES_TO_VIEW_CONNECT_WITH = ['Software Developer', 'Software', 'Software Engineer', 'Python', 'Javascript', 'Node']
 
 # Turn on Location Filter, this works only for Connecting
-DELIMIT_BY_LOCATION = True
+CONNECT_BY_LOCATION = True
 
 # List of locations to filter by
-LOCATIONS = ['Ohio', 'Cleveland', 'Akron', 'Mentor', 'Chagrin', 'Solon', 'Westlake', 'Eastlake']
+LOCATIONS_TO_CONNECT = ['Ohio', 'Cleveland', 'Akron', 'Mentor', 'Chagrin', 'Solon', 'Westlake', 'Eastlake']
 
 # Amount of times it will scroll the page to load more potential connections
-# If you are using VIEW_SPECIFIC_USERS you might want to increase this value
-NUM_LAZY_LOAD_ON_MY_NETWORK_PAGE = 5
+# If you are using VIEW_SPECIFIC_TITLES you might want to increase this value
+LAZY_LOAD_NUM = 18
 
 # Turn on Quick Connecting with Users
 CONNECT_WITH_USERS = True
@@ -50,13 +54,10 @@ CONNECT_WITH_USERS = True
 LIMIT_CONNECTION = True
 
 # LinkedIn limit on Connections is 15,000
-CONNECTION_LIMIT = 20
+CONNECTION_LIMIT = 50
 
 # Don't connect with every single user
 RANDOMIZE_CONNECTING_WITH_USERS = False
-
-# List of job titles to connect with
-JOBS_TO_CONNECT_WITH = ['Developer', 'HR', 'Software', 'Software Engineer', 'Python', 'Javascript', 'Node']
 
 """    DEBUGGING    """
 # See more information about what the bot is doing
