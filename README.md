@@ -1,4 +1,7 @@
 ![LinkedIn-Bot](https://i.imgur.com/od6HpD8.png)
+[![Badges](https://img.shields.io/badge/language-Python-blue.svg)](https://github.com/SethRzeszutek/LinkedIn-Bot)
+[![Badges](https://img.shields.io/badge/license-GPL-lightgreen.svg)](https://github.com/SethRzeszutek/LinkedIn-Bot)
+[![Badges](https://img.shields.io/badge/version-2.1-lightgrey.svg)](https://github.com/SethRzeszutek/LinkedIn-Bot)
 # LinkedInBot
 
 Increase your likelihood to grow your connections and potentially get interview opportunities on LinkedIn by increasing visibility of your profile by viewing others profiles.
