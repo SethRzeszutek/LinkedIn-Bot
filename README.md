@@ -62,41 +62,43 @@ Then edit the `configure.py` file for other settings
 ```python
 from credentials import *
 
-CONFIGURED_EMAIL = email #-email
-CONFIGURED_PASSWORD = password #-password
+CONFIGURED_EMAIL = email
+CONFIGURED_PASSWORD = password
 
-BROWSER = "CHROME" #Options are CHROME or FIREFOX
-HEADLESS = True #-Run your script without any need for opening the browser! Only works for Firefox...
+"""    ENVIRONMENT SETTINGS    """
+BROWSER = "Chrome"  # Options are CHROME or FIREFOX
+HEADLESS = False  # Headless doesnt seem to run correctly in Chrome, but works correctly in Firefox
+PARSER = "lxml" #lxml is the fastest but there are few different options
 
-PRINT_ACTIONS = True #-See every main step performed
-PRINT_SETTINGS = False #-See settings
+# Amount of times it will scroll the page to load more potential connections
+# If you are using VIEW_SPECIFIC_TITLES you might want to increase this value
+LAZY_LOAD_NUM = 18
 
-PARSER = "lxml" #-Parser for BeautifulSoup to use
+'''    TITLES SETTINGS    '''
+VIEW_SPECIFIC_TITLES = True
+SAVECSV = True #Save users viewed in CSV
 
-SCREENSHOT #-Screenshot each connection
-SAVECSV #-Save visited users in CSV
+'''    CONNECTING SETTINGS    '''
+CONNECT_WITH_USERS = True
+CONNECT_BY_LOCATION = True #Uses list of locations and only connects if they are in that list
+LIMIT_CONNECTION = True #Limit number of users to connect with
+CONNECTION_LIMIT = 50 #Max number of users to connect with
+RANDOMIZE_CONNECTING_WITH_USERS = False #50/50 shot of connecting with the user
+SCREENSHOTS = True #Screenshot user if you connect with them
 
-#For lists, you can enter partial words to search more broadly.
-#For example, you can add 'Software' and titles like 'Software Developer' and 'Software Engineer' should work.
+'''    TITLES AND LOCATIONS    '''
+# List of job and locations titles to view/connect with
+# For lists, you can enter partial words to search more broadly.
+# For example, you can add 'Software' and titles like 'Software Developer' and 'Software Engineer' should work.
+# However, if you use a phrase like 'Developer' it will add 'Software Developer' and other things like 'Community Developer'
+TITLES_TO_VIEW_CONNECT_WITH = ['Software Developer', 'Software Engineer','Javascript']
+LOCATIONS_TO_CONNECT = ['Ohio', 'Cleveland', 'Akron']
 
-VIEW_SPECIFIC_TITLES = False #- Filter by a connection's title/job
-TITLES_TO_VIEW_CONNECT_WITH = ['CEO', 'CTO', 'HR'] #- Titles/Jobs to filter by
 
-CONNECT_BY_LOCATION = False #- Filter by a connection's location
-LOCATIONS_TO_CONNECT = ['Ohio','Cleveland','Akron'] #- Locations
-
-LAZY_LOAD_NUM = 10 #- How often it scrolls down the page, raise this number if you have view specific user on.
-
-CONNECT_WITH_USERS = False #- Automatically connect with users (LinkedIn's limit is 15,000)
-
-LIMIT_CONNECTION = False #- Limit connections to a specific number
-CONNECTION_LIMIT = 5 #- Max connection amount
-RANDOMIZE_CONNECTING_WITH_USERS = False #- Randomize connecting
-TITLES_TO_CONNECT_WITH = ['Developer', 'HR'] #- Jobs to connect with
-
-RANDOMIZE_ENDORSING_CONNECTIONS = False #- Randomize endorsments
-
-VERBOSE = False #- Extra printout's of what the bot is doing
+"""    DEBUGGING    """
+PRINT_ACTIONS = True #See every major action the bot takes
+PRINT_SETTINGS = False #Print settings before you start
+VERBOSE = False #See more detailed info on what the bot is reading
 ```
 
 
