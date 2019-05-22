@@ -6,7 +6,7 @@ CONFIGURED_PASSWORD = password
 
 """    ENVIRONMENT SETTINGS    """
 BROWSER = "Chrome"  # Options are CHROME or FIREFOX
-HEADLESS = False  # Headless doesnt seem to run correctly in Chrome, but works correctly in Firefox
+HEADLESS = True  # Headless doesnt seem to run correctly in Chrome, but works correctly in Firefox
 PARSER = "lxml" #lxml is the fastest but there are few different options
 
 # Amount of times it will scroll the page to load more potential connections
@@ -38,3 +38,4 @@ LOCATIONS_TO_CONNECT = ['Ohio', 'Cleveland', 'Akron', 'Mentor', 'Chagrin', 'Solo
 PRINT_ACTIONS = True #See every major action the bot takes
 PRINT_SETTINGS = False #Print settings before you start
 VERBOSE = False #See more detailed info on what the bot is reading
+POTENTIAL_COMPANY = True #This attempts to get the company name a new way that is prone to errors but would only be used when no company is found the normal way

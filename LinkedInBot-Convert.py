@@ -78,8 +78,9 @@ def StartBrowser():
 		if PRINT_ACTIONS:
 			print('\n-> Launching Chrome')
 		options = Options()
-		#if HEADLESS:
-		#	options.headless = True
+		if HEADLESS:
+			print("\t*Chrome will not run correctly in headless mode, starting normal mode.")
+			#options.headless = True
 		
 		browser = webdriver.Chrome(options=options)
 	elif BROWSER.upper() == "FIREFOX":
@@ -161,7 +162,6 @@ def LinkedInBot(browser):
 
 	# Infinite loop
 	while True:
-
 		# Generate random IDs
 		while True:
 
@@ -207,12 +207,12 @@ def LinkedInBot(browser):
 			#company = getCompany(browser)
 			company ="n/a"
 			if " at " in TEMP_JOBMATCH:
-				company = TEMP_JOBMATCH.split(" at ",1)[1] 
+				company = TEMP_JOBMATCH.split(" at ",1)[1]
 			elif " for " in TEMP_JOBMATCH:
-				company = TEMP_JOBMATCH.split(" for ",1)[1] 
-
-			
-			
+				company = TEMP_JOBMATCH.split(" for ",1)[1]
+			if POTENTIAL_COMPANY:
+				if company == "n/a":
+					company = getCompany(browser)
 
 			if CONNECT_BY_LOCATION and VIEW_SPECIFIC_TITLES:
 				print("● Name: %-17s | T: %-2d | V: %-2d | Q: %-2d | Location: %-10s | Title: %-15s" %(TEMP_NAME, T, V, len(profilesQueued), TEMP_LOCATION, TEMP_JOB))
@@ -552,6 +552,10 @@ def getCompany(browser):
 		return rtn
 	else:
 		return("n/a")
+
+
+
+
 
 
 
