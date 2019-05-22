@@ -14,7 +14,6 @@ from bs4 import BeautifulSoup
 from random import shuffle
 import urllib.parse as urlparse
 from os.path import join, dirname
-#from dotenv import load_dotenv
 
 SESSION_CONNECTION_COUNT = 0
 TEMP_NAME=""
