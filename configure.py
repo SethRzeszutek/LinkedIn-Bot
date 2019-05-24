@@ -11,7 +11,7 @@ PARSER = "lxml" #lxml is the fastest but there are few different options
 
 # Amount of times it will scroll the page to load more potential connections
 # If you are using VIEW_SPECIFIC_TITLES you might want to increase this value
-LAZY_LOAD_NUM = 18
+LAZY_LOAD_NUM = 25
 
 '''    TITLES SETTINGS    '''
 VIEW_SPECIFIC_TITLES = True
@@ -33,9 +33,16 @@ SCREENSHOTS = True #Screenshot user if you connect with them
 TITLES_TO_VIEW_CONNECT_WITH = ['Software Developer', 'Software', 'Software Engineer', 'Python', 'Javascript', 'Node']
 LOCATIONS_TO_CONNECT = ['Ohio', 'Cleveland', 'Akron', 'Mentor', 'Chagrin', 'Solon', 'Westlake', 'Eastlake']
 
-
-"""    DEBUGGING    """
+'''    VIEWING    '''
+#BOX - is helpful and takes up the most space, it adds a nice box around each user.
+#STANDARD - the normal view that is essentially a medium amount of space, you can still follow it but not as organized.
+#COMPRESSED - the smallest view because sometimes size matters
+VIEW_MODE = "BOX" #BOX, STANDARD, or COMPRESSED
 PRINT_ACTIONS = True #See every major action the bot takes
 PRINT_SETTINGS = False #Print settings before you start
+EXTRA_USER_INFO = True #Print data that match your criteria with the user info
+
+"""    DEBUGGING    """
 VERBOSE = False #See more detailed info on what the bot is reading
 POTENTIAL_COMPANY = True #This attempts to get the company name a new way that is prone to errors but would only be used when no company is found the normal way
+DEBUGGING = True

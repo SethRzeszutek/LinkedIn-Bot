@@ -205,22 +205,59 @@ def LinkedInBot(browser):
 			TEMP_LOCATION = LocationMatch(browser)
 			#company = getCompany(browser)
 			company ="n/a"
+			title ="n/a"
 			if " at " in TEMP_JOBMATCH:
 				company = TEMP_JOBMATCH.split(" at ",1)[1]
 			elif " for " in TEMP_JOBMATCH:
 				company = TEMP_JOBMATCH.split(" for ",1)[1]
+			if " at " in TEMP_JOBMATCH:
+				title = TEMP_JOBMATCH.split(" at ",1)[0]
+			elif " for " in TEMP_JOBMATCH:
+				title = TEMP_JOBMATCH.split(" for ",1)[0]
+
 			if POTENTIAL_COMPANY:
 				if company == "n/a":
 					company = getCompany(browser)
-
-			if CONNECT_BY_LOCATION and VIEW_SPECIFIC_TITLES:
-				print("● Name: %-17s | T: %-2d | V: %-2d | Q: %-2d | Location: %-10s | Title: %-15s" %(TEMP_NAME, T, V, len(profilesQueued), TEMP_LOCATION, TEMP_JOB))
-			elif CONNECT_BY_LOCATION:
-				print("● Name: %-17s | T: %-2d | V: %-2d | Q: %-2d | Location: %-10s" %(TEMP_NAME, T, V, len(profilesQueued), TEMP_LOCATION))
-			elif VIEW_SPECIFIC_TITLES:
-				print("● Name: %-17s | T: %-2d | V: %-2d | Q: %-2d | Title: %-15s" %(TEMP_NAME, T, V, len(profilesQueued), TEMP_JOB))
+			
+			if VIEW_MODE.upper() == "BOX":
+				tvq = str(T)+":"+str(V)+":"+str(len(profilesQueued))
+				print("┌───────────────────────────────────┐")
+				print("│● Name: %-26.26s │"%(TEMP_NAME))
+				if CONNECT_BY_LOCATION and VIEW_SPECIFIC_TITLES:
+					print("├───────────────────────────────────┼───────────────────────────────────┬───────────────────────────────────┐")
+					print("│ Title Match: %-20.20s │ Location Match: %-17.17s │ T:V:Q %-28s│" %(TEMP_JOB, TEMP_LOCATION, tvq))
+				elif CONNECT_BY_LOCATION:
+					print("│ Title Match: %-20.20s │ Location Match: %-17.17s │ T:V:Q %-28s│" %("OFF", TEMP_LOCATION, tvq))
+				elif VIEW_SPECIFIC_TITLES:
+					print("│ Title Match: %-20.20s │ Location Match: %-17.17s │ T:V:Q %-28s│" %(TEMP_JOB, "OFF", tvq))
+				else:
+					print("│ Title Match: %-20.20s │ Location Match: %-17.17s │ T:V:Q %-28s│" %("OFF", "OFF", tvq))
+				if EXTRA_USER_INFO:
+					print("├───────────────────────────────────┼───────────────────────────────────┼───────────────────────────────────┤")
+					print("│ Title: %-26.26s │ Location: %-23.23s │ Company %-26.26s│" %(title,TEMP_LOCATIONMATCH, company))
+				print("└───────────────────────────────────┴───────────────────────────────────┴───────────────────────────────────┘")
+			elif VIEW_MODE.upper() == "COMPRESSED":
+				if CONNECT_BY_LOCATION and VIEW_SPECIFIC_TITLES:
+					print("● Name: %-17.17s | Title Match: %-15.15s | Location Match: %-13.13s | T:V:Q %-3.3d:%-3.3d:%-3.3d" %(TEMP_NAME, TEMP_JOB, TEMP_LOCATION, T, V, len(profilesQueued)))
+				elif CONNECT_BY_LOCATION:
+					print("● Name: %-17.17s | Location Match: %-13.13s | T:V:Q %-3.3d:%-3.3d:%-3.3d" %(TEMP_NAME, TEMP_LOCATION, T, V, len(profilesQueued)))
+				elif VIEW_SPECIFIC_TITLES:
+					print("● Name: %-17.17s | Title Match: %-15.15s | T:V:Q %-3.3d:%-3.3d:%-3.3d" %(TEMP_NAME, TEMP_JOB, T, V, len(profilesQueued)))
+				else:
+					print("● Name: %-17.17s | T:V:Q %-3.3d:%-3.3d:%-3.3d" %(TEMP_NAME, T, V, len(profilesQueued)))
+				if EXTRA_USER_INFO:
+					print("↳       %17.17s | Title: %-21.21s | Location: %-19.19s | Company %-15.15s" %("",title,TEMP_LOCATIONMATCH, company))
 			else:
-				print("● Name: %-17s | T: %-2d | V: %-2d | Q: %-2d" %(TEMP_NAME, T, V, len(profilesQueued)))
+				if CONNECT_BY_LOCATION and VIEW_SPECIFIC_TITLES:
+					print("● Name: %-17.17s | Title Match: %-15.15s | Location Match: %-13.13s | T:V:Q %-3.3d:%-3.3d:%-3.3d" %(TEMP_NAME, TEMP_JOB, TEMP_LOCATION, T, V, len(profilesQueued)))
+				elif CONNECT_BY_LOCATION:
+					print("● Name: %-17.17s | Location Match: %-13.13s | T:V:Q %-3.3d:%-3.3d:%-3.3d" %(TEMP_NAME, TEMP_LOCATION, T, V, len(profilesQueued)))
+				elif VIEW_SPECIFIC_TITLES:
+					print("● Name: %-17.17s | Title Match: %-15.15s | T:V:Q %-3.3d:%-3.3d:%-3.3d" %(TEMP_NAME, TEMP_JOB, T, V, len(profilesQueued)))
+				else:
+					print("● Name: %-17.17s | T:V:Q %-3.3d:%-3.3d:%-3.3d" %(TEMP_NAME, T, V, len(profilesQueued)))
+				if EXTRA_USER_INFO:
+					print("↳       %17.17s | Title: %-21.21s | Location: %-19.19s | Company %-15.15s" %("",title,TEMP_LOCATIONMATCH, company))
 
 			# Connect with users if the flag is turned on and matches your criteria
 			# NOTE: FindProfileURLsInNetworkPage is already filtering by user's title, so before it is even added to the list it is filtered by title if the option is on
@@ -560,11 +597,11 @@ def getCompany(browser):
 
 
 if __name__ == '__main__':
-	
-	try:
+	if DEBUGGING:
 		Launch()
-	except:
-		print("\nProgram Stopped Running")
-	
-	#Launch()
+	else:
+		try:
+			Launch()
+		except:
+			print("\nProgram Stopped Running")
 

@@ -105,7 +105,7 @@ VERBOSE = False #See more detailed info on what the bot is reading
 ## Run
 Once you have installed the required dependencies, created `credentials.py`, and edited the `configure.py` file, you can run the bot.
 
-Make sure you are in the correct folder and run the following command: `python LinkedInBot.py`
+Make sure you are in the correct folder and run the following command: `python LinkedInBot-Convert.py`
 
 ## Output
 
