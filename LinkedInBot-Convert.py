@@ -3,22 +3,12 @@
 # Updated Author: Seth Rzeszutek
 # Previous Authors: Matt Flood and helloitsim
 
-import os, random, sys, time, re, csv, datetime
-from configure import *
-from selenium import webdriver
-if BROWSER.upper() == "CHROME":
-	from selenium.webdriver.chrome.options import Options
-if BROWSER.upper() == "FIREFOX":
-	from selenium.webdriver.firefox.options import Options
-from bs4 import BeautifulSoup
-from random import shuffle
-import urllib.parse as urlparse
-from os.path import join, dirname
+from imports import *
 
 SESSION_CONNECTION_COUNT = 0
 TEMP_NAME=""
 TEMP_JOB=""
-TEMP_JOBMATCH=""
+TEMP_TITLEMATCH=""
 TEMP_LOCATION=""
 TEMP_LOCATIONMATCH=""
 TEMP_PROFILE=[]
@@ -40,10 +30,16 @@ def Launch():
 	Launch the LinkedIn bot.
 	"""
 
-	# Check if the file 'visitedUsers.txt' exists, otherwise create it
-	if os.path.isfile('visitedUsers.txt') == False:
-		visitedUsersFile = open('visitedUsers.txt', 'wb')
-		visitedUsersFile.close()
+	if MODE.upper() == "VIEW":
+		# Check if the file 'visitedUsers.txt' exists, otherwise create it
+		if os.path.isfile('visitedUsers.txt') == False:
+			visitedUsersFile = open('visitedUsers.txt', 'wb')
+			visitedUsersFile.close()
+	elif MODE.upper() == "JOB":
+		# Check if the file 'visitedJobs.txt' exists, otherwise create it
+		if os.path.isfile('visitedJobs.txt') == False:
+			visitedUsersFile = open('visitedJobs.txt', 'wb')
+			visitedUsersFile.close()
 
 	StartBrowser()
 
@@ -113,10 +109,13 @@ def StartBrowser():
 		browser.quit()
 	else:
 		print('!!! Sign in success!\n')
-		LinkedInBot(browser)
+		if MODE.upper() == "VIEW":
+			LinkedInView(browser)
+		elif MODE.upper() == "JOB":
+			LinkedInJob(browser)
 
 
-def LinkedInBot(browser):
+def LinkedInView(browser):
 	"""
 	Run the LinkedIn Bot.
 	browser: the selenium driver to run the bot with.
@@ -164,7 +163,7 @@ def LinkedInBot(browser):
 		# Generate random IDs
 		while True:
 
-			NavigateToMyNetworkPage(browser)
+			NavigateToPage(browser, 'https://www.linkedin.com/mynetwork/')
 			T += 1
 			if GetNewProfileURLS(BeautifulSoup(browser.page_source, PARSER), profilesQueued):
 				break
@@ -201,19 +200,19 @@ def LinkedInBot(browser):
 				locationMatches = False
 			regex = r'\(.*?\)'
 			TEMP_NAME = re.sub(regex, '', browser.title.replace(' | LinkedIn', ''))
-			TEMP_JOB = JobMatch(browser)
+			TEMP_JOB = TitleMatch(browser)
 			TEMP_LOCATION = LocationMatch(browser)
 			#company = getCompany(browser)
 			company ="n/a"
 			title ="n/a"
-			if " at " in TEMP_JOBMATCH:
-				company = TEMP_JOBMATCH.split(" at ",1)[1]
-			elif " for " in TEMP_JOBMATCH:
-				company = TEMP_JOBMATCH.split(" for ",1)[1]
-			if " at " in TEMP_JOBMATCH:
-				title = TEMP_JOBMATCH.split(" at ",1)[0]
-			elif " for " in TEMP_JOBMATCH:
-				title = TEMP_JOBMATCH.split(" for ",1)[0]
+			if " at " in TEMP_TITLEMATCH:
+				company = TEMP_TITLEMATCH.split(" at ",1)[1]
+			elif " for " in TEMP_TITLEMATCH:
+				company = TEMP_TITLEMATCH.split(" for ",1)[1]
+			if " at " in TEMP_TITLEMATCH:
+				title = TEMP_TITLEMATCH.split(" at ",1)[0]
+			elif " for " in TEMP_TITLEMATCH:
+				title = TEMP_TITLEMATCH.split(" for ",1)[0]
 
 			if POTENTIAL_COMPANY:
 				if company == "n/a":
@@ -238,11 +237,11 @@ def LinkedInBot(browser):
 				print("└───────────────────────────────────┴───────────────────────────────────┴───────────────────────────────────┘")
 			elif VIEW_MODE.upper() == "COMPRESSED":
 				if CONNECT_BY_LOCATION and VIEW_SPECIFIC_TITLES:
-					print("● Name: %-17.17s | Title Match: %-15.15s | Location Match: %-13.13s | T:V:Q %-3.3d:%-3.3d:%-3.3d" %(TEMP_NAME, TEMP_JOB, TEMP_LOCATION, T, V, len(profilesQueued)))
+					print("● Name: %-17.17s | T:V:Q %-3.3d:%-3.3d:%-3.3d" %(TEMP_NAME, T, V, len(profilesQueued)))
 				elif CONNECT_BY_LOCATION:
-					print("● Name: %-17.17s | Location Match: %-13.13s | T:V:Q %-3.3d:%-3.3d:%-3.3d" %(TEMP_NAME, TEMP_LOCATION, T, V, len(profilesQueued)))
+					print("● Name: %-17.17s | T:V:Q %-3.3d:%-3.3d:%-3.3d" %(TEMP_NAME, T, V, len(profilesQueued)))
 				elif VIEW_SPECIFIC_TITLES:
-					print("● Name: %-17.17s | Title Match: %-15.15s | T:V:Q %-3.3d:%-3.3d:%-3.3d" %(TEMP_NAME, TEMP_JOB, T, V, len(profilesQueued)))
+					print("● Name: %-17.17s | T:V:Q %-3.3d:%-3.3d:%-3.3d" %(TEMP_NAME, T, V, len(profilesQueued)))
 				else:
 					print("● Name: %-17.17s | T:V:Q %-3.3d:%-3.3d:%-3.3d" %(TEMP_NAME, T, V, len(profilesQueued)))
 				if EXTRA_USER_INFO:
@@ -286,9 +285,9 @@ def LinkedInBot(browser):
 						ConnectWithUser(browser)
 			
 
-			TEMP_PROFILE = [TEMP_NAME, TEMP_JOB, TEMP_JOBMATCH, TEMP_LOCATION, TEMP_LOCATIONMATCH, company, CONNECTED]
+			TEMP_PROFILE = [TEMP_NAME, TEMP_JOB, TEMP_TITLEMATCH, TEMP_LOCATION, TEMP_LOCATIONMATCH, company, CONNECTED]
 			if SAVECSV:
-				addToCSV(TEMP_PROFILE,TIME)
+				addToCSV(TEMP_PROFILE,TIME, 'CSV')
 				if VERBOSE:
 					print("-> Temp Profile List")
 					print(TEMP_PROFILE)
@@ -339,7 +338,7 @@ def LinkedInBot(browser):
 			print(CSV_DATA)
 
 
-def NavigateToMyNetworkPage(browser):
+def NavigateToPage(browser, url):
 	"""
 	Navigate to the my network page and scroll to the bottom and let the lazy loading
 	go to be able to grab more potential users in your network. It is recommended to
@@ -348,9 +347,13 @@ def NavigateToMyNetworkPage(browser):
 	browser: the selenium browser used to interact with the page.
 	"""
 
-	browser.get('https://www.linkedin.com/mynetwork/')
-	for counter in range(1,LAZY_LOAD_NUM):
-		ScrollToBottomAndWaitForLoad(browser)
+	browser.get(url)
+	if MODE.upper() == "VIEW":
+		for counter in range(1,VIEW_LAZY_LOAD_NUM):
+			ScrollToBottomAndWaitForLoad(browser)
+	elif MODE.upper() == "JOB":
+		for counter in range(1,JOB_LAZY_LOAD_NUM):
+			ScrollToBottomAndWaitForLoad(browser)
 
 
 def ConnectWithUser(browser):
@@ -436,7 +439,7 @@ def FindProfileURLsInNetworkPage(soup, profilesQueued, profileURLS, visitedUsers
 
 	return newProfileURLS
 
-def ValidateURL(url, profileURLS, profilesQueued, visitedUsers):
+def ValidateURL(url, URLS, Queued, visited):
 	"""
 	Validate the url passed meets requirement to be navigated to.
 	profileURLS: list of urls already added within the GetNewProfileURLS method to be returned.
@@ -445,8 +448,10 @@ def ValidateURL(url, profileURLS, profilesQueued, visitedUsers):
 		adding duplicates.
 	visitedUsers: users already visited. Don't want to be creepy and visit them multiple days in a row.
 	"""
-
-	return url not in profileURLS and url not in profilesQueued and "/in/" in url and "connections" not in url and "skills" not in url and url not in visitedUsers
+	if MODE.upper() == "VIEW":
+		return url not in URLS and url not in Queued and "/in/" in url and "connections" not in url and "skills" not in url and url not in visited
+	elif MODE.upper() == "JOB":
+		return url not in URLS and url not in Queued and url not in visited
 
 def ScrollToBottomAndWaitForLoad(browser):
 	"""
@@ -520,27 +525,27 @@ def LocationMatch(browser):
 	else:
 		return("X")
 
-def JobMatch(browser):
+def TitleMatch(browser):
 	'''
-	Gets the job that matches your settings and also sets TEMP_JOBMATCH
+	Gets the job that matches your settings and also sets TEMP_TITLEMATCH
 	browser = selenium webdriver
 	returns the job as a string
 	'''
 
-	global TEMP_JOBMATCH
-	TEMP_JOBMATCH = "X" #if this doesnt change it, it could have the previous connections data
+	global TEMP_TITLEMATCH
+	TEMP_TITLEMATCH = "X" #if this doesnt change it, it could have the previous connections data
 	soup = BeautifulSoup(browser.page_source, PARSER)
 	rtn = ""
 	ul = soup.find("ul", {"class": "pv-top-card-v3--list"})
 	li = ul.find_next("h2")
 	for job in TITLES_TO_VIEW_CONNECT_WITH:
 		if job.lower() in li.text.lower():
-			TEMP_JOBMATCH = (" ".join((li.text.lower()).split()))
+			TEMP_TITLEMATCH = (" ".join((li.text.lower()).split()))
 			jobtitle = str(job)
 			rtn = jobtitle
 			if VERBOSE:
 				print(">>>> Job Match: "+rtn)
-				print(">>>>"+jobtitle + " : " + TEMP_JOBMATCH)
+				print(">>>>"+jobtitle + " : " + TEMP_TITLEMATCH)
 	if rtn != "":
 		return rtn
 	else:
@@ -558,14 +563,14 @@ def createCSV(data, time):
 		writer.writerow(data)
 	csvFile.close()
 
-def addToCSV(data, time):
+def addToCSV(data, time, location):
 	'''
 	Appends to the CSV file that matches the name with that time
 	data is the list that will get added to the file
 	time is the time at creation of this file
 	'''
 	filename = 'Linked-In-'+time+'.csv'
-	with open(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'CSV', filename), 'a') as csvFile:
+	with open(os.path.join(os.path.dirname(os.path.realpath(__file__)), location, filename), 'a') as csvFile:
 		writer = csv.writer(csvFile)
 		writer.writerow(data)
 	csvFile.close()
@@ -589,11 +594,194 @@ def getCompany(browser):
 	else:
 		return("n/a")
 
+''' JOB COLLECTION SECTION '''
 
+def LinkedInJob(browser):
+	"""
+	Run the LinkedIn Bot.
+	browser: the selenium driver to run the bot with.
+	"""
+	T = 0
+	V = 0
+	jobsQueued = []
+	error403Count = 0
+	timer = time.time()
 
+	global TEMP_NAME
+	global TEMP_JOB
+	global TEMP_LOCATION
+	global TEMP_PROFILE
+	global CSV_DATA
+	global CONNECTED
 
+	header = ["Job","Company", "Location", "Keyword Match","Job Link"]
+	try:
+		os.makedirs("JOBS")
+		if PRINT_ACTIONS:
+			print("\t* Created JOBS Folder")
+	except FileExistsError:
+		pass
+	createCSV(header, TIME)
 
+	if PRINT_ACTIONS:
+		print('-> Scraping Job URLs on Jobs tab.')
 
+	# Infinite loop
+	while True:
+		# Generate random IDs
+		while True:
+
+			NavigateToPage(browser,'https://www.linkedin.com/jobs/')
+			T += 1
+			if GetJobURLS(BeautifulSoup(browser.page_source, PARSER), jobsQueued):
+				break
+			else:
+				print('|',
+				time.sleep(random.uniform(5, 7)))
+		soup = BeautifulSoup(browser.page_source, PARSER)
+		jobsQueued = list(set(GetJobURLS(soup, jobsQueued)))
+
+		V += 1
+		if PRINT_ACTIONS:
+			print('\t* Finished gathering Job URLs.\n')
+			print("--> Starting Process\n")
+
+		while jobsQueued:
+			add_job = False
+			if (SESSION_CONNECTION_COUNT>=CONNECTION_LIMIT):
+				print("---Max connections reached stopping program---")
+				exit()
+			CONNECTED = False
+			shuffle(jobsQueued)
+			jobID = jobsQueued.pop()
+			url = 'https://www.linkedin.com'+jobID
+			browser.get(url)
+
+			job = (soup.find("h1", {"class": "jobs-top-card__job-title"})).text
+			company = ((soup.find("h3", {"class": "jobs-top-card__company-info"})).find_next("span")).text
+			location = (soup.find("a", {"class": "jobs-top-card__exact-location"})).text
+			
+			if VIEW_MODE.upper() == "BOX":
+				tvq = str(T)+":"+str(V)+":"+str(len(jobsQueued))
+				print("┌───────────────────────────────────┐")
+				print("│● Job: %-27.27s │"%(job))
+				print("├───────────────────────────────────┼───────────────────────────────────┬───────────────────────────────────┐")
+				print("│ Company: %-24.24s │ Location: %-23.23s │ T:V:Q %-28s│" %(company, location, tvq))
+				print("└───────────────────────────────────┴───────────────────────────────────┴───────────────────────────────────┘")
+			else:
+				print("● Job: %-17.17s | Company: %-15.15s | Location: %-13.13s | T:V:Q %-3.3d:%-3.3d:%-3.3d" %(job, company, location, T, V, len(jobsQueued)))
+
+			keyword = ""
+			# Connect with users if the flag is turned on and matches your criteria
+			# NOTE: FindProfileURLsInNetworkPage is already filtering by user's title, so before it is even added to the list it is filtered by title if the option is on
+			if FILTER_BY_KEYWORD:
+				browser.find_element_by_xpath('//button[@class="artdeco-button artdeco-button--muted artdeco-button--icon-right artdeco-button--2 artdeco-button--tertiary ember-view"]').click()
+				description = soup.find("div", {"class": "jobs-box"})
+				for word in KEYWORDS:
+					if word.lower() in description.lower():
+						keyword = word
+						add_job = True
+			else:
+				add_job = False
+			temp_joblist = [job, company, location, keyword, url]
+			addToCSV(temp_joblist,TIME, 'JOBS')
+			if VERBOSE:
+				print("-> Temp Job List")
+				print(temp_joblist)
+
+			
+			# Add the ID to the visitedJobsFile
+			with open('visitedJobs.txt', 'a') as visitedJobsFile:
+				visitedJobsFile.write((jobID)+'\r\n')
+			visitedJobsFile.close()
+
+			# Get new profiles ID
+			time.sleep(10)
+			soup = BeautifulSoup(browser.page_source, PARSER)
+			jobsQueued.extend(GetJobURLS(soup, jobsQueued))
+			jobsQueued = list(set(jobsQueued))
+
+			browserTitle = (browser.title).replace('  ',' ')
+
+			# 403 error
+			if browserTitle == '403: Forbidden':
+				error403Count += 1
+				print('\n!!! LinkedIn is momentarily unavailable - Paused for', (error403Count), 'hour(s)\n')
+				time.sleep(3600*error403Count+(random.randrange(0, 10))*60)
+				timer = time.time() # Reset the timer
+
+			# User in network
+			else:
+				T += 1
+				V += 1
+				error403Count = 0
+
+			# Pause
+			if (T%1000==0) or time.time()-timer > 3600:
+				print('\n!!! Paused for 1 hour\n')
+				time.sleep(3600+(random.randrange(0, 10))*60)
+				timer = time.time() # Reset the timer
+			else:
+				time.sleep(random.uniform(5, 7)) # Otherwise, sleep to make sure everything loads
+		print('\n!!! No more jobs to visit. Everything restarts with the jobs page...\n')
+
+def GetJobURLS(soup, jobsQueued):
+	"""
+	Get new profile urls to add to the navigate queue.
+	soup: beautiful soup instance of page's source code.
+	jobsQueued: current list of profile queues.
+	"""
+	# Open, load and close
+	with open('visitedJobs.txt', 'r') as visitedJobsFile:
+		visitedJobs = [line.strip() for line in visitedJobsFile]
+	visitedJobsFile.close()
+
+	jobURLS = []
+
+	jobURLS.extend(FindJobURLs(soup, jobsQueued, jobURLS, visitedJobs))
+
+	jobURLS = list(set(jobURLS))
+
+	return jobURLS
+
+def FindJobURLs(soup, jobsQueued, jobURLS, visitedJobs):
+	"""
+	Get new profile urls to add to the navigate queue from the my network page.
+	soup: beautiful soup instance of page's source code.
+	jobsQueued: current list of job queues.
+	jobURLS: job urls already found this scrape.
+	visitedJobs: jobs that we have already viewed.
+	"""
+
+	newJobURLS = []
+
+	try:
+		for li in soup.find_all('li', class_='job-card'):
+			#print(li)
+			a = li.find_next("a", {"data-control-name": "A_jobshome_job_link_click"})
+			print(a.text)
+			if ValidateURL(a['href'], jobURLS, jobsQueued, visitedJobs):
+				#print("ValidateURL Pass")
+				if JOB_LOCATION:
+					for h5 in li.find('h5', class_='job-card__location'):
+						print(h5.text)
+						for location in JOB_LOCATIONS:
+							if VERBOSE:
+								print(">>>> "+location)
+							if location.lower() in h5.text.lower():
+								if VERBOSE:
+									print(">>>> "+a['href'])
+								newJobURLS.append(a['href'])
+								break
+
+				else:
+					if VERBOSE:
+						print(">>>> "+a['href'])
+					newJobURLS.append(a['href'])
+	except:
+		pass
+
+	return newJobURLS
 
 
 if __name__ == '__main__':

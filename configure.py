@@ -8,10 +8,11 @@ CONFIGURED_PASSWORD = password
 BROWSER = "Chrome"  # Options are CHROME or FIREFOX
 HEADLESS = True  # Headless doesnt seem to run correctly in Chrome, but works correctly in Firefox
 PARSER = "lxml" #lxml is the fastest but there are few different options
+MODE = "JOB" #Options are JOB or VIEW
 
 # Amount of times it will scroll the page to load more potential connections
 # If you are using VIEW_SPECIFIC_TITLES you might want to increase this value
-LAZY_LOAD_NUM = 25
+VIEW_LAZY_LOAD_NUM = 25
 
 '''    TITLES SETTINGS    '''
 VIEW_SPECIFIC_TITLES = True
@@ -30,8 +31,17 @@ SCREENSHOTS = True #Screenshot user if you connect with them
 # For lists, you can enter partial words to search more broadly.
 # For example, you can add 'Software' and titles like 'Software Developer' and 'Software Engineer' should work.
 # However, if you use a phrase like 'Developer' it will add 'Software Developer' and other things like 'Community Developer'
-TITLES_TO_VIEW_CONNECT_WITH = ['Software Developer', 'Software', 'Software Engineer', 'Python', 'Javascript', 'Node']
+TITLES_TO_VIEW_CONNECT_WITH = ['Software Developer', 'Software Engineer', 'Python', 'Javascript', 'Node']
 LOCATIONS_TO_CONNECT = ['Ohio', 'Cleveland', 'Akron', 'Mentor', 'Chagrin', 'Solon', 'Westlake', 'Eastlake']
+
+'''    COLLECTING JOB SETTINGS    '''
+JOB_LOCATION = True
+JOB_LOCATIONS = ['OH','Ohio', 'Cleveland', 'Akron', 'Mentor', 'Chagrin', 'Solon']
+FILTER_BY_KEYWORD = True
+KEYWORDS = ["Python", "Docker"]
+JOB_LAZY_LOAD_NUM = 8
+
+
 
 '''    VIEWING    '''
 #BOX - is helpful and takes up the most space, it adds a nice box around each user.
@@ -43,6 +53,6 @@ PRINT_SETTINGS = False #Print settings before you start
 EXTRA_USER_INFO = True #Print data that match your criteria with the user info
 
 """    DEBUGGING    """
-VERBOSE = False #See more detailed info on what the bot is reading
+VERBOSE = True #See more detailed info on what the bot is reading
 POTENTIAL_COMPANY = True #This attempts to get the company name a new way that is prone to errors but would only be used when no company is found the normal way
 DEBUGGING = True
